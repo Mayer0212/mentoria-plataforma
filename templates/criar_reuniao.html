@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; text-align: left;">
+    
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <h2 style="margin: 0;">📅 Nova Reunião</h2>
+        <a href="{% url 'dashboard' %}" class="btn" style="background: #333;">Cancelar</a>
+    </div>
+
+    <div style="background-color: var(--card-bg); padding: 30px; border-radius: 10px; border: 1px solid var(--border);">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: var(--text-muted); margin-bottom: 5px;">Título da Reunião</label>
+                {{ form.titulo }}
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: var(--text-muted); margin-bottom: 5px;">Data e Horário</label>
+                {{ form.data_inicio }}
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: var(--text-muted); margin-bottom: 5px;">Link da Sala (Zoom/Meet/Teams)</label>
+                {{ form.link_externo }}
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <label style="display: block; color: var(--accent); margin-bottom: 10px; font-weight: bold;">
+                    Selecione os Convidados:
+                </label>
+                
+                <div style="max-height: 200px; overflow-y: auto; background: #252525; padding: 15px; border-radius: 5px; border: 1px solid var(--border);">
+                    {% for checkbox in form.convidados %}
+                        <div style="margin-bottom: 8px; display: flex; align-items: center;">
+                            {{ checkbox.tag }} 
+                            <label for="{{ checkbox.id_for_label }}" style="margin-left: 10px; cursor: pointer; color: white;">
+                                {{ checkbox.choice_label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                <small style="color: var(--text-muted);">Segure CTRL para selecionar múltiplos (se não for checkbox).</small>
+            </div>
+
+            <button type="submit" class="btn" style="width: 100%; padding: 15px; font-size: 1.1em;">Agendar Reunião</button>
+        </form>
+    </div>
+</div>
+
+<style>
+    input[type="text"], input[type="datetime-local"], input[type="url"] {
+        width: 100%;
+        padding: 12px;
+        background: #2c2c2c;
+        border: 1px solid var(--border);
+        color: white;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: var(--primary); /* Cor vermelha no check */
+    }
+</style>
+{% endblock %}

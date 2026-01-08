@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto; text-align: left;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+        <h2 style="margin: 0; color: white;">💬 Suas Conversas</h2>
+        
+        <a href="{% url 'usuarios_online' %}" class="btn" style="font-size: 0.8em; padding: 8px 15px;">
+            + Nova Conversa
+        </a>
+    </div>
+    
+    <div style="display: flex; flex-direction: column; gap: 15px;">
+        {% for u in usuarios %}
+            <a href="{% url 'sala_chat' u.username %}" 
+               class="user-card"
+               style="display: flex; justify-content: space-between; align-items: center; 
+                      padding: 20px; 
+                      background: var(--card-bg); 
+                      border: 1px solid var(--border); 
+                      text-decoration: none; 
+                      color: var(--text-main); 
+                      border-radius: 10px;
+                      transition: all 0.3s;">
+                
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    
+                    <div class="avatar-container">
+                        {% if u.perfil.foto %}
+                            <img src="{{ u.perfil.foto.url }}" 
+                                 alt="{{ u.username }}" 
+                                 class="avatar-img {% if u.perfil.tipo == 'Mentor' %}border-mentor{% else %}border-estudante{% endif %}">
+                        {% else %}
+                            <div class="avatar-placeholder {% if u.perfil.tipo == 'Mentor' %}border-mentor{% else %}border-estudante{% endif %}">
+                                {{ u.username|make_list|first|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 1.2em; font-weight: bold; color: white;">{{ u.first_name|default:u.username }}</span>
+                            
+                            <span class="badge {{ u.perfil.tipo|lower }}">
+                                {{ u.perfil.tipo }}
+                            </span>
+                        </div>
+                        <span style="font-size: 0.9em; color: var(--text-muted); display: block; margin-top: 5px;">
+                            Clique para ver o histórico...
+                        </span>
+                    </div>
+                </div>
+                
+                <div style="text-align: right;">
+                    <span style="color: var(--primary); font-size: 1.5em;">›</span>
+                </div>
+            </a>
+        {% empty %}
+            <div style="text-align: center; padding: 60px 20px; border: 2px dashed var(--border); border-radius: 10px; background: rgba(255,255,255,0.02);">
+                <h3 style="color: white; margin-bottom: 10px;">Sua caixa de entrada está vazia</h3>
+                <p style="color: var(--text-muted); margin-bottom: 25px;">
+                    Você ainda não iniciou nenhuma conversa. Encontre mentores ou estudantes online agora mesmo!
+                </p>
+                <a href="{% url 'usuarios_online' %}" class="btn" style="padding: 12px 25px; font-size: 1em;">
+                    🔍 Encontrar Pessoas
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <br>
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{% url 'dashboard' %}" style="color: var(--text-muted); font-size: 0.9em;">← Voltar ao Painel</a>
+    </div>
+</div>
+
+<style>
+    .user-card:hover {
+        border-color: var(--primary) !important;
+        transform: translateX(5px);
+        background-color: #252525 !important;
+    }
+
+    /* --- CORREÇÃO DAS BORDAS --- */
+    /* Define o tamanho e formato aqui, a cor vem nas classes abaixo */
+    .avatar-img {
+        width: 60px; 
+        height: 60px; 
+        border-radius: 50%; 
+        object-fit: cover;
+        border: 2px solid transparent; /* Padrão */
+    }
+
+    .avatar-placeholder {
+        width: 60px; 
+        height: 60px; 
+        background: #333; 
+        color: white; 
+        border-radius: 50%; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-weight: bold; 
+        font-size: 1.5em;
+        border: 2px solid transparent; /* Padrão */
+    }
+
+    /* As classes que o Django vai adicionar dinamicamente */
+    .border-mentor {
+        border-color: var(--primary) !important;
+    }
+    .border-estudante {
+        border-color: #2ecc71 !important;
+    }
+
+    /* Estilos das Badges */
+    .badge {
+        font-size: 0.7em;
+        padding: 2px 8px;
+        border-radius: 12px;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+    }
+    
+    .badge.mentor {
+        background: rgba(211, 47, 47, 0.2);
+        color: var(--primary);
+        border: 1px solid var(--primary);
+    }
+
+    .badge.estudante {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+        border: 1px solid #2ecc71;
+    }
+</style>
+{% endblock %}

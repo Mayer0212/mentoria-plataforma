@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 50px auto; background: var(--card-bg); padding: 30px; border-radius: 8px; border: 1px solid var(--border);">
+    <h2>✏️ Editar Reunião</h2>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        <div style="margin-bottom: 15px;">
+            <label>Título da Reunião:</label>
+            <input type="text" name="titulo" value="{{ reuniao.titulo }}" required 
+                   style="width: 100%; padding: 10px; margin-top: 5px; background: #222; border: 1px solid #444; color: white;">
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+            <div style="flex: 1;">
+                <label>Data:</label>
+                <input type="date" name="data" value="{{ reuniao.data_inicio|date:'Y-m-d' }}" required
+                       style="width: 100%; padding: 10px; margin-top: 5px; background: #222; border: 1px solid #444; color: white;">
+            </div>
+            <div style="flex: 1;">
+                <label>Hora:</label>
+                <input type="time" name="hora" value="{{ reuniao.data_inicio|date:'H:i' }}" required
+                       style="width: 100%; padding: 10px; margin-top: 5px; background: #222; border: 1px solid #444; color: white;">
+            </div>
+        </div>
+
+        <div style="margin-bottom: 15px;">
+            <label>Link da Reunião (Zoom/Meet/Teams):</label>
+            <input type="url" name="link" value="{{ reuniao.link_externo|default:'' }}" 
+                   style="width: 100%; padding: 10px; margin-top: 5px; background: #222; border: 1px solid #444; color: white;">
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" class="btn" style="background: var(--primary); border: none; flex: 1;">Salvar Alterações</button>
+            <a href="{% url 'dashboard' %}" class="btn" style="background: #555; text-align: center; flex: 1;">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

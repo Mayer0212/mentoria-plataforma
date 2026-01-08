@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 700px; margin: 0 auto; text-align: left;">
+
+    <div style="background: var(--card-bg); border-radius: 15px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        
+        <div style="height: 120px; background: linear-gradient(135deg, var(--bg-color) 0%, #3e1a1a 100%); border-bottom: 1px solid var(--border);"></div>
+
+        <div style="padding: 0 30px 30px; position: relative;">
+            
+            <div style="margin-top: -60px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end;">
+                
+                {% if perfil_user.perfil.foto %}
+                    <img src="{{ perfil_user.perfil.foto.url }}" 
+                         style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 5px solid var(--card-bg); background: var(--card-bg);">
+                {% else %}
+                    <div style="width: 120px; height: 120px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 3em; border: 5px solid var(--card-bg);">
+                        {{ perfil_user.username|make_list|first|upper }}
+                    </div>
+                {% endif %}
+
+                {% if perfil_user != user %}
+                    <a href="{% url 'sala_chat' perfil_user.username %}" class="btn" style="border-radius: 30px; padding: 10px 25px; box-shadow: 0 4px 10px rgba(211, 47, 47, 0.4);">
+                        💬 Enviar Mensagem
+                    </a>
+                {% else %}
+                    <a href="{% url 'meu_perfil' %}" class="btn" style="background: #444;">✏️ Editar Perfil</a>
+                {% endif %}
+            </div>
+
+            <h1 style="margin: 0; font-size: 2em; color: white;">{{ perfil_user.username }}</h1>
+            <p style="color: var(--accent); font-size: 1.1em; font-weight: 500; margin: 5px 0 20px;">
+                {{ perfil_user.perfil.profissao|default:"Membro da Comunidade" }}
+            </p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                <div style="background: #252525; padding: 15px; border-radius: 8px;">
+                    <small style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8em;">Empresa / Instituição</small>
+                    <div style="color: white; font-weight: bold;">{{ perfil_user.perfil.empresa|default:"-" }}</div>
+                </div>
+                <div style="background: #252525; padding: 15px; border-radius: 8px;">
+                    <small style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8em;">Formação</small>
+                    <div style="color: white; font-weight: bold;">{{ perfil_user.perfil.formacao|default:"-" }}</div>
+                </div>
+            </div>
+
+            <h3 style="color: white; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Sobre</h3>
+            <p style="line-height: 1.6; color: var(--text-main);">
+                {{ perfil_user.perfil.bio|default:"Este usuário ainda não escreveu uma biografia."|linebreaks }}
+            </p>
+
+        </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="javascript:history.back()" style="color: var(--text-muted);">← Voltar</a>
+    </div>
+
+</div>
+{% endblock %}

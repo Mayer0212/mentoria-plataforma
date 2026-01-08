@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Mentoria</title>
+    
+    {% load static %}
+    
+    <link rel="icon" href="{% static 'logo.png' %}" type="image/png">
+    
+    <style>
+        /* --- CORES E TEMA --- */
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-muted: #aaaaaa;
+            --primary: #d32f2f;
+            --primary-hover: #b71c1c;
+            --accent: #ff5252;
+            --border: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- MENU SUPERIOR --- */
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 2px solid var(--primary);
+            height: 90px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+        }
+
+        .header-container {
+            width: 100%;
+            max-width: 1200px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-area {
+            flex: 0 0 auto;
+            margin-right: 20px;
+        }
+
+        .logo-area img {
+            max-height: 70px;
+            width: auto;
+            transition: transform 0.3s;
+            display: block;
+        }
+        .logo-area img:hover { transform: scale(1.05); }
+
+        nav {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        .btn-logout {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8em;
+            padding: 5px 15px;
+            border-radius: 20px;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .btn-logout:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* --- CONTEÚDO PRINCIPAL --- */
+        .main-content {
+            padding: 40px 20px;
+            text-align: center;
+            flex: 1; /* ISSO EMPURRA O RODAPÉ PARA BAIXO */
+        }
+
+        /* --- RODAPÉ (NOVO) --- */
+        footer {
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border);
+            padding: 25px 0;
+            margin-top: auto;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Para mobile */
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+
+        .footer-link {
+            color: var(--primary);
+            text-decoration: none;
+            margin-left: 5px;
+            transition: color 0.2s;
+        }
+        .footer-link:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        /* --- ESTILOS GERAIS --- */
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        nav a:hover { text-decoration: none; }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: var(--primary);
+            color: white !important;
+            text-decoration: none;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.2s;
+            margin: 5px;
+        }
+        .btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+
+        input, select, textarea {
+            background-color: #2c2c2c;
+            border: 1px solid var(--border);
+            color: white;
+            padding: 12px;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+
+        h1, h2, h3, h4, h5 { color: white; margin-top: 0; }
+        p { color: var(--text-muted); line-height: 1.6; }
+        
+        .minha-mensagem { background-color: var(--primary) !important; color: white; border: none; }
+        .outra-mensagem { background-color: #333 !important; color: white; border: none; }
+
+        /* Ajuste para mobile no rodapé */
+        @media (max-width: 600px) {
+            .footer-container {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            
+            <div class="logo-area">
+                <a href="{% url 'dashboard' %}" class="logo-placeholder">
+                    <img src="{% static 'logo.png' %}" alt="LOGO">
+                </a>
+            </div>
+
+            <nav>
+    <ul>
+        {% if user.is_authenticated %}
+            <li><a href="{% url 'dashboard' %}">Início</a></li>
+            <li><a href="{% url 'lista_usuarios' %}">Conversas</a></li>
+            <li><a href="{% url 'calendario' %}">Agenda</a></li>
+            <li><a href="{% url 'usuarios_online' %}">Usuários Online</a></li>
+            <li><a href="{% url 'quem_somos' %}">Quem Somos</a></li>
+            <li><a href="{% url 'meu_perfil' %}">Meu Perfil</a></li>
+
+            {% if user.is_superuser %}
+                <li>
+                    <a href="/admin/" target="_blank" style="color: #ffcc00; border: 1px solid #ffcc00; padding: 5px 10px; border-radius: 15px; font-size: 0.8em;">
+                        ⚙️ ADMIN
+                    </a>
+                </li>
+            {% endif %}
+            <li>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-logout">SAIR</button>
+                </form>
+            </li>
+        {% else %}
+            <li><a href="{% url 'login' %}">Entrar</a></li>
+            <li><a href="{% url 'quem_somos' %}">Quem Somos</a></li>
+        {% endif %}
+    </ul>
+</nav>
+
+        </div>
+    </header>
+
+    <div class="main-content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div>
+                &copy; 2026 Diretório Acadêmico Karen Adami. Todos os direitos reservados.
+            </div>
+            <div>
+                Para suporte técnico: 
+                <a href="mailto:gigiomayer@gmail.com" class="footer-link">gigiomayer@gmail.com</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

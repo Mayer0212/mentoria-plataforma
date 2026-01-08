@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="
+    max-width: 400px; 
+    margin: 80px auto; 
+    background-color: var(--card-bg); 
+    padding: 40px; 
+    border-radius: 10px; 
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    text-align: center;">
+
+    <h2 style="margin-bottom: 30px; color: white;">🔐 Acesso Restrito</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        {% if form.errors %}
+            <div style="background-color: #3e1a1a; color: #ffcccc; padding: 10px; border-radius: 4px; margin-bottom: 20px; font-size: 0.9em; border: 1px solid var(--primary);">
+                Usuário ou senha incorretos.
+            </div>
+        {% endif %}
+
+        <div style="text-align: left; margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--text-muted);">Usuário</label>
+            <input type="text" name="username" required autofocus 
+                   style="background: #2c2c2c; border: 1px solid var(--border); color: white; padding: 12px; width: 100%; border-radius: 5px;">
+        </div>
+
+        <div style="text-align: left; margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 5px; color: var(--text-muted);">Senha</label>
+            <input type="password" name="password" required 
+                   style="background: #2c2c2c; border: 1px solid var(--border); color: white; padding: 12px; width: 100%; border-radius: 5px;">
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%; padding: 12px; font-size: 1.1em;">ENTRAR</button>
+        
+        <p style="margin-top: 20px; font-size: 0.9em;">
+            <a href="#" style="color: var(--text-muted); text-decoration: none;">Esqueceu a senha?</a>
+        </p>
+
+    </form>
+</div>
+{% endblock %}

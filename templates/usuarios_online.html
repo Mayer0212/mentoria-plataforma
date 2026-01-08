@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 1200px; margin: 0 auto;">
+    
+    <div style="text-align: left; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 15px;">
+        <h2>👥 Comunidade Online</h2>
+        <p style="color: var(--text-muted);">Conecte-se com mentores e alunos da plataforma.</p>
+    </div>
+
+    <div class="split-container">
+
+        <div class="column-section">
+            <h3 style="color: var(--primary); display: flex; align-items: center; gap: 10px;">
+                🎓 Mentores
+                <span style="font-size: 0.6em; background: rgba(211, 47, 47, 0.2); padding: 2px 8px; border-radius: 10px;">
+                    {{ mentores.count }}
+                </span>
+            </h3>
+            
+            <div class="cards-grid">
+                {% for u in mentores %}
+                <div class="user-card mentor-card">
+                    
+                    <div style="margin-bottom: 15px; position: relative;">
+                        {% if u.perfil.foto %}
+                            <img src="{{ u.perfil.foto.url }}" alt="{{ u.username }}" class="user-avatar">
+                        {% else %}
+                            <div class="user-avatar-placeholder">
+                                {{ u.username|make_list|first|upper }}
+                            </div>
+                        {% endif %}
+                        <div style="position: absolute; bottom: -5px; right: calc(50% - 40px); background: var(--primary); color: white; font-size: 0.7em; padding: 2px 6px; border-radius: 4px; font-weight: bold;">
+                            MENTOR
+                        </div>
+                    </div>
+
+                    <strong style="display: block; font-size: 1.2em; color: white;">{{ u.first_name|default:u.username }}</strong>
+                    
+                    <p style="font-size: 0.9em; color: var(--accent); margin: 5px 0 15px;">
+                        {{ u.perfil.profissao|default:"Especialista" }}
+                    </p>
+
+                    <small style="display: block; color: var(--text-muted); margin-bottom: 15px;">
+                        Visto: {{ u.last_login|date:"d/m - H:i" }}
+                    </small>
+
+                    <a href="{% url 'perfil_publico' u.username %}" class="btn" style="font-size: 0.9em; width: 100%; box-sizing: border-box;">
+                        Ver Perfil
+                    </a>
+                </div>
+                {% empty %}
+                    <p style="color: var(--text-muted); font-style: italic;">Nenhum mentor encontrado.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="column-section">
+            <h3 style="color: #2ecc71; display: flex; align-items: center; gap: 10px;">
+                📚 Estudantes
+                <span style="font-size: 0.6em; background: rgba(46, 204, 113, 0.2); padding: 2px 8px; border-radius: 10px;">
+                    {{ estudantes.count }}
+                </span>
+            </h3>
+
+            <div class="cards-grid">
+                {% for u in estudantes %}
+                <div class="user-card student-card">
+                    
+                    <div style="margin-bottom: 15px;">
+                        {% if u.perfil.foto %}
+                            <img src="{{ u.perfil.foto.url }}" alt="{{ u.username }}" class="user-avatar" style="border-color: #2ecc71;">
+                        {% else %}
+                            <div class="user-avatar-placeholder" style="border-color: #2ecc71;">
+                                {{ u.username|make_list|first|upper }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <strong style="display: block; font-size: 1.2em; color: white;">{{ u.first_name|default:u.username }}</strong>
+                    
+                    <p style="font-size: 0.9em; color: #aaa; margin: 5px 0 15px;">
+                        {{ u.perfil.profissao|default:"Estudante" }}
+                    </p>
+
+                    <small style="display: block; color: var(--text-muted); margin-bottom: 15px;">
+                        Visto: {{ u.last_login|date:"d/m - H:i" }}
+                    </small>
+
+                    <a href="{% url 'perfil_publico' u.username %}" class="btn btn-student" style="font-size: 0.9em; width: 100%; box-sizing: border-box;">
+                        Ver Perfil
+                    </a>
+                </div>
+                {% empty %}
+                    <p style="color: var(--text-muted); font-style: italic;">Nenhum estudante encontrado.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    /* Layout de Colunas */
+    .split-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        align-items: start;
+    }
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 20px;
+    }
+
+    .user-card {
+        background: var(--card-bg); 
+        padding: 20px; 
+        border-radius: 10px; 
+        border: 1px solid var(--border); 
+        text-align: center; 
+        transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .user-card:hover { transform: translateY(-5px); }
+    
+    .mentor-card:hover { border-color: var(--primary); }
+    .student-card:hover { border-color: #2ecc71; }
+
+    .user-avatar {
+        width: 80px; height: 80px; 
+        border-radius: 50%; 
+        object-fit: cover; 
+        border: 3px solid var(--primary);
+    }
+
+    .user-avatar-placeholder {
+        width: 80px; height: 80px; 
+        background: #333; 
+        color: white; 
+        border-radius: 50%; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        margin: 0 auto; 
+        font-weight: bold; 
+        font-size: 2em; 
+        border: 3px solid var(--primary);
+    }
+
+    /* ESTILO NOVO PARA O BOTÃO VERDE */
+    .btn-student {
+        background-color: #2ecc71 !important; /* Força o verde */
+        border: none !important;
+    }
+    .btn-student:hover {
+        background-color: #27ae60 !important; /* Verde mais escuro no hover */
+    }
+
+    @media (max-width: 900px) {
+        .split-container { grid-template-columns: 1fr; }
+    }
+</style>
+{% endblock %}

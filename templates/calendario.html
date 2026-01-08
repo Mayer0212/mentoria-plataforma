@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto; text-align: left;">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>📅 Agenda Completa</h2>
+        <a href="{% url 'dashboard' %}" style="color: var(--text-muted);">← Voltar ao Painel</a>
+    </div>
+
+    <div style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
+        <a href="{% url 'nova_reuniao' %}" class="btn">+ Marcar Reunião</a>
+        <a href="{% url 'nova_tarefa' %}" class="btn">+ Agendar Tarefa</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        
+        <div>
+            <h3 style="background: var(--primary); color: white; padding: 12px; border-radius: 5px; margin-top: 0; text-align: center;">
+                Próximas Reuniões
+            </h3>
+            {% for r in reunioes %}
+                <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 15px; margin-bottom: 10px; border-radius: 5px; border-left: 5px solid var(--accent); position: relative;">
+                    
+                    <strong style="color: white; font-size: 1.1em;">{{ r.data_inicio|date:"d/m/Y" }} às {{ r.data_inicio|date:"H:i" }}</strong>
+                    <p style="margin: 5px 0; color: var(--text-main); font-weight: bold;">{{ r.titulo }}</p>
+                    
+                    <div style="font-size: 0.9em; margin-top: 8px; color: var(--text-muted); border-top: 1px solid #333; padding-top: 8px;">
+                        <div>
+                            Organizador: <span style="color: white;">{{ r.solicitante.username }}</span>
+                        </div>
+                        <div style="margin-top: 3px;">
+                            Convidados: 
+                            {% for c in r.convidados.all %}
+                                <span style="color: var(--accent);">{{ c.username }}</span>{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                Ninguém
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    {% if r.link_externo %}
+                        <div style="margin-top: 10px;">
+                            <a href="{{ r.link_externo }}" target="_blank" style="font-size: 0.9em; color: var(--accent); font-weight: bold; display: inline-block;">
+                                🔗 Acessar Sala Virtual →
+                            </a>
+                        </div>
+                    {% endif %}
+
+                    {% if r.solicitante == request.user %}
+                        <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; justify-content: flex-end;">
+                            <a href="{% url 'editar_reuniao' r.id %}" style="font-size: 0.85em; color: #3498db; text-decoration: none; border: 1px solid #3498db; padding: 2px 8px; border-radius: 4px;">
+                                ✏️ Editar
+                            </a>
+                            <a href="{% url 'excluir_reuniao' r.id %}" onclick="return confirm('Tem certeza que deseja cancelar esta reunião?')" style="font-size: 0.85em; color: #e74c3c; text-decoration: none; border: 1px solid #e74c3c; padding: 2px 8px; border-radius: 4px;">
+                                🗑️ Excluir
+                            </a>
+                        </div>
+                    {% endif %}
+
+                </div>
+            {% empty %}
+                <p style="color: var(--text-muted); text-align: center; padding: 20px; border: 1px dashed var(--border); border-radius: 5px;">Nenhuma reunião agendada.</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            <h3 style="background: var(--primary); color: white; padding: 12px; border-radius: 5px; margin-top: 0; text-align: center;">
+                Lista de Tarefas
+            </h3>
+            {% for t in tarefas %}
+                <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 15px; margin-bottom: 10px; border-radius: 5px; border-left: 5px solid var(--text-muted);">
+                    <strong style="color: white; font-size: 1.1em;">{{ t.titulo }}</strong>
+                    
+                    {% if t.informacoes %}
+                        <p style="margin: 5px 0; color: var(--text-muted); font-size: 0.9em; font-style: italic;">{{ t.informacoes }}</p>
+                    {% endif %}
+                    
+                    <div style="margin-top: 10px; font-size: 0.85em; color: var(--text-muted);">
+                        Prazo: <span style="color: white;">{{ t.data_prazo|date:"d/m/Y" }}</span>
+                    </div>
+
+                    {% if t.criador == request.user %}
+                        <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px; justify-content: flex-end;">
+                            <a href="{% url 'editar_tarefa' t.id %}" style="font-size: 0.85em; color: #3498db; text-decoration: none; border: 1px solid #3498db; padding: 2px 8px; border-radius: 4px;">
+                                ✏️ Editar
+                            </a>
+                            <a href="{% url 'excluir_tarefa' t.id %}" onclick="return confirm('Tem certeza que deseja excluir esta tarefa?')" style="font-size: 0.85em; color: #e74c3c; text-decoration: none; border: 1px solid #e74c3c; padding: 2px 8px; border-radius: 4px;">
+                                🗑️ Excluir
+                            </a>
+                        </div>
+                    {% endif %}
+
+                </div>
+            {% empty %}
+                <p style="color: var(--text-muted); text-align: center; padding: 20px; border: 1px dashed var(--border); border-radius: 5px;">Nenhuma tarefa pendente.</p>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+<style>
+    @media (max-width: 768px) {
+        div[style*="display: grid"] {
+            grid-template-columns: 1fr !important; /* Vira uma coluna só no celular */
+        }
+    }
+    
+    /* Pequeno efeito hover nos botões de ação */
+    a[href*="editar"]:hover { background: rgba(52, 152, 219, 0.1); }
+    a[href*="excluir"]:hover { background: rgba(231, 76, 60, 0.1); }
+</style>
+{% endblock %}

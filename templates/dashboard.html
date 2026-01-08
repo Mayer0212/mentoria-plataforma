@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto; text-align: left;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2>Olá, {{ user.username }} 👋</h2>
+    </div>
+
+    {% if notificacoes > 0 %}
+    <div style="background-color: #3e1a1a; border-left: 5px solid var(--accent); padding: 20px; margin-bottom: 30px; border-radius: 6px; color: #ffcccc;">
+        <h3 style="margin: 0; color: var(--accent);">🔔 Você tem novidades!</h3>
+        <p style="margin: 5px 0 0; color: #ffcccc;">Você possui <strong>{{ notificacoes }}</strong> nova(s) mensagem(ns) no chat privado.</p>
+        <br>
+        <a href="{% url 'lista_usuarios' %}" style="text-decoration: none; color: white; font-weight: bold; border-bottom: 1px dotted white;">Ir para o Chat →</a> 
+    </div>
+    {% else %}
+    <div style="background-color: var(--card-bg); padding: 15px; margin-bottom: 30px; text-align: center; color: var(--text-muted); border-radius: 6px; border: 1px solid var(--border);">
+        Nenhuma notificação nova.
+    </div>
+    {% endif %}
+
+    <h3 style="border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 20px;">📅 Agenda de Hoje ({{ hoje|date:"d/m/Y" }})</h3>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        
+        <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 8px;">
+            <h4 style="margin-top: 0; color: var(--accent);">Reuniões</h4>
+            {% if reunioes %}
+                {% for r in reunioes %}
+                    <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
+                        <strong style="color: white;">⏰ {{ r.data_inicio|date:"H:i" }}</strong> - {{ r.titulo }}<br>
+                        <div style="font-size: 0.9em; margin-top: 5px; color: var(--text-muted);">
+    <div>Organizador: <strong style="color: white;">{{ r.solicitante.username }}</strong></div>
+    <div>
+        Convidados: 
+        {% for convidado in r.convidados.all %}
+            <span style="color: var(--accent);">{{ convidado.username }}</span>{% if not forloop.last %}, {% endif %}
+        {% empty %}
+            Ninguém
+        {% endfor %}
+    </div>
+</div>
+                        <br>
+                        <a href="{{ r.link_externo }}" target="_blank" style="color: var(--accent); font-size: 0.9em;">Acessar Link Externo</a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Nada agendado para hoje.</p>
+            {% endif %}
+        </div>
+
+        <div style="background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 8px;">
+            <h4 style="margin-top: 0; color: var(--accent);">Tarefas do Dia</h4>
+            {% if tarefas %}
+                <ul style="padding-left: 20px;">
+                {% for t in tarefas %}
+                    <li style="color: var(--text-main); margin-bottom: 5px;">{{ t.titulo }}</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>Tudo limpo por hoje!</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div style="margin-top: 40px; text-align: center;">
+        <p style="margin-bottom: 20px;">Ações Rápidas</p>
+        <a href="{% url 'nova_reuniao' %}" class="btn">+ Marcar Reunião</a>
+        <a href="{% url 'nova_tarefa' %}" class="btn">+ Agendar Tarefa</a>
+        <a href="{% url 'lista_usuarios' %}" class="btn">💬 Enviar Mensagem</a>
+    </div>
+
+</div>
+{% endblock %}

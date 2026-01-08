@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+
+    <div style="text-align: center; margin-bottom: 40px;">
+        <h2>🚀 Quem Faz Acontecer</h2>
+        <p style="color: var(--text-muted);">Conheça a equipe DAKA e nossos mentores especialistas.</p>
+    </div>
+
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="openTab(event, 'dakaSection')">
+            DAKA
+        </button>
+        <button class="tab-btn" onclick="openTab(event, 'mentoresSection')">
+            MENTORES
+        </button>
+    </div>
+
+    <div id="dakaSection" class="tab-content" style="display: block;">
+        <div class="team-grid">
+            
+            <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro1.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Lorenzo Rodriguez Luz</h3>
+                <span class="role">Presidente</span>
+            </div>
+
+            <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro2.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Gabriel Bahr</h3>
+                <span class="role">Vice-Presidente</span>
+            </div>
+
+             <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro3.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Nilton Regis Netto</h3>
+                <span class="role">Secretário Geral</span>
+            </div>
+
+            <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro4.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Guilherme Alcheri</h3>
+                <span class="role">2º Secretário</span>
+            </div>
+
+            <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro5.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Mariana Volz</h3>
+                <span class="role">Tesoureira</span>
+            </div>
+
+            <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro6.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Paloma Castro</h3>
+                <span class="role">Diretora do Dpto. Acadêmico</span>
+            </div>
+
+            <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro7.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Luy Moraes</h3>
+                <span class="role">Diretor de Eventos</span>
+            </div>
+
+            <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro8.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Giovanni Mayer</h3>
+                <span class="role">Webmaster</span>
+            </div>
+
+            <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro9.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Anna Julia</h3>
+                <span class="role">Diretora de Vendas</span>
+            </div>
+
+            <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro10.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Thomas Perlenberg</h3>
+                <span class="role">1º Conselheiro Fiscal</span>
+            </div>
+
+            <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro11.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Rafaela Gomes</h3>
+                <span class="role">Diretora de Marketing</span>
+            </div>
+
+            <div class="member-card">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/daka_membro12.jpeg' %}" alt="Membro DAKA" >
+                </div>
+                <h3>Artur Blank</h3>
+                <span class="role">2º Conselheiro Fiscal</span>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="mentoresSection" class="tab-content" style="display: none;">
+        <div class="team-grid">
+            
+            <div class="member-card mentor-style">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/mentor1.jpg' %}" alt="Mentor" onerror="this.src='https://ui-avatars.com/api/?name=Mentor+Um&background=2ecc71&color=fff'">
+                </div>
+                <h3>Dra. Ana Silva</h3>
+                <span class="role">Especialista em Petróleo</span>
+                <p class="description">
+                    "Com 15 anos de experiência offshore, ajudo jovens a entenderem a dinâmica das plataformas."
+                </p>
+            </div>
+
+            <div class="member-card mentor-style">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/mentor2.jpg' %}" alt="Mentor" onerror="this.src='https://ui-avatars.com/api/?name=Mentor+Dois&background=2ecc71&color=fff'">
+                </div>
+                <h3>Carlos Souza</h3>
+                <span class="role">Engenheiro Geólogo</span>
+                <p class="description">
+                    "Focado em análise de solo e exploração. Minha missão é passar conhecimento prático."
+                </p>
+            </div>
+
+            <div class="member-card mentor-style">
+                <div class="photo-wrapper">
+                    <img src="{% static 'img/mentor3.jpg' %}" alt="Mentor" onerror="this.src='https://ui-avatars.com/api/?name=Mentor+Tres&background=2ecc71&color=fff'">
+                </div>
+                <h3>Mariana Costa</h3>
+                <span class="role">Gestão de Energia</span>
+                <p class="description">
+                    "Especialista em energias renováveis e transição energética para o mercado futuro."
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function openTab(evt, sectionName) {
+        var i, tabcontent, tablinks;
+
+        // 1. Esconde todos os conteúdos
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // 2. Remove a classe "active" de todos os botões
+        tablinks = document.getElementsByClassName("tab-btn");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        // 3. Mostra o conteúdo atual e adiciona "active" no botão clicado
+        document.getElementById(sectionName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+
+<style>
+    /* BOTÕES (ABAS) */
+    .tabs-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid var(--border);
+    }
+
+    .tab-btn {
+        background-color: transparent;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        font-size: 1.1em;
+        width: 50%; /* Ocupa metade cada um */
+        color: var(--text-muted);
+        font-weight: bold;
+        transition: 0.3s;
+        border-bottom: 3px solid transparent;
+    }
+
+    .tab-btn:hover {
+        color: white;
+        background-color: rgba(255,255,255,0.05);
+    }
+
+    .tab-btn.active {
+        color: var(--primary);
+        border-bottom: 3px solid var(--primary);
+    }
+
+    /* GRID DE PESSOAS */
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 30px;
+        padding: 20px 0;
+        animation: fadeIn 0.5s;
+    }
+
+    /* CARD DE MEMBRO */
+    .member-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 25px;
+        text-align: center;
+        transition: transform 0.3s;
+    }
+
+    .member-card:hover {
+        transform: translateY(-5px);
+        border-color: var(--primary);
+    }
+
+    /* FOTO COM BORDA */
+    .photo-wrapper img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border: 3px solid var(--primary); /* Borda Vermelha Padrão (DAKA) */
+    }
+
+    .member-card h3 { margin: 0; color: white; font-size: 1.2em; }
+    .role { color: var(--accent); font-size: 0.9em; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;}
+    
+    /* ESTILO ESPECÍFICO PARA MENTORES */
+    .mentor-style {
+        border-left: 5px solid #2ecc71; /* Detalhe verde na esquerda */
+    }
+    
+    .mentor-style .photo-wrapper img {
+        border-color: #2ecc71; /* Borda Verde */
+    }
+
+    .mentor-style .role {
+        color: #2ecc71;
+    }
+
+    .description {
+        margin-top: 15px;
+        font-size: 0.9em;
+        font-style: italic;
+        color: var(--text-muted);
+        line-height: 1.5;
+    }
+
+    /* Animação suave ao trocar de aba */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
