@@ -120,7 +120,7 @@ def calendario(request):
     # Pega TODAS as reuniões futuras (não só as de hoje)
     reunioes = Reuniao.objects.filter(
         Q(solicitante=request.user) | Q(convidados=request.user)
-    ).order_by('data_inicio')
+    ).distinct().order_by('data_inicio')
 
     # Pega TODAS as tarefas não concluídas
     tarefas = Tarefa.objects.filter(usuario=request.user, concluida=False).order_by('data_prazo')
