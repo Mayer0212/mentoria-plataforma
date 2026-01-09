@@ -103,16 +103,32 @@ def sala_chat(request, username):
 @login_required
 def criar_tarefa(request):
     if request.method == 'POST':
-        form = TarefaForm(request.POST)
+        # MUDANÇA 1: Passamos user=request.user aqui para o form validar as permissões
+        form = TarefaForm(request.POST, user=request.user)
+        
         if form.is_valid():
             tarefa = form.save(commit=False)
-            tarefa.usuario = request.user
+            
+            # MUDANÇA 2: Verificamos se o mentor escolheu alguém
+            # (O campo 'usuario' vem do form.cleaned_data)
+            usuario_escolhido = form.cleaned_data.get('usuario')
+            
+            if usuario_escolhido:
+                # Se tem alguém selecionado, a tarefa vai pra ele
+                tarefa.usuario = usuario_escolhido
+                messages.success(request, f'Tarefa atribuída para {usuario_escolhido.username}!')
+            else:
+                # Se está vazio (ou se o campo estava oculto), é para mim mesmo
+                tarefa.usuario = request.user
+                messages.success(request, 'Tarefa criada com sucesso!')
+            
             tarefa.save()
             return redirect('dashboard')
+            
     else:
-        form = TarefaForm()
+        # MUDANÇA 3: Passamos user=request.user aqui para o form montar o HTML correto
+        form = TarefaForm(user=request.user)
     
-    # Reutilizamos o mesmo HTML do formulário da reunião!
     return render(request, 'form_generico.html', {'form': form, 'titulo': 'Nova Tarefa'})
 
 @login_required
