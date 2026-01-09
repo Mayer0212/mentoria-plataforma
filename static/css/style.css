@@ -1,0 +1,36 @@
+/* --- REGRA 1: Imagens nunca estouram a tela --- */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* --- REGRA 2: O corpo do site não pode ser maior que a janela --- */
+body, html {
+    overflow-x: hidden; /* Evita barra de rolagem horizontal indesejada */
+    margin: 0;
+    padding: 0;
+}
+
+/* --- REGRA 3: Ajustes específicos para Celular --- */
+@media (max-width: 768px) {
+    
+    /* Tabelas costumam quebrar no celular. 
+       Isso cria uma barra de rolagem SÓ na tabela se ela for grande */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    /* Reduz o tamanho de títulos muito grandes */
+    h1 {
+        font-size: 24px;
+    }
+    
+    /* Ajusta margens gerais */
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+        width: 100%;
+    }
+}

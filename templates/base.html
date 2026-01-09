@@ -8,9 +8,10 @@
     {% load static %}
     
     <link rel="icon" href="{% static 'logo.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     
     <style>
-        /* --- CORES E TEMA --- */
+        /* --- SUAS VARIÁVEIS DE COR (Mantive igual) --- */
         :root {
             --bg-color: #121212;
             --card-bg: #1e1e1e;
@@ -33,7 +34,7 @@
             min-height: 100vh;
         }
 
-        /* --- MENU SUPERIOR --- */
+        /* --- HEADER --- */
         header {
             background-color: var(--card-bg);
             border-bottom: 2px solid var(--primary);
@@ -41,6 +42,8 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             display: flex;
             justify-content: center;
+            position: relative; /* Importante para o menu mobile */
+            z-index: 1000;
         }
 
         .header-container {
@@ -49,11 +52,11 @@
             padding: 0 20px;
             display: flex;
             align-items: center;
+            justify-content: space-between; /* Garante que logo e botão fiquem nos cantos */
         }
 
         .logo-area {
             flex: 0 0 auto;
-            margin-right: 20px;
         }
 
         .logo-area img {
@@ -64,10 +67,10 @@
         }
         .logo-area img:hover { transform: scale(1.05); }
 
+        /* --- MENU --- */
         nav {
-            flex: 1;
             display: flex;
-            justify-content: center;
+            align-items: center;
         }
 
         nav ul {
@@ -89,8 +92,15 @@
             letter-spacing: 0.5px;
         }
         
-        nav a:hover {
-            color: var(--accent);
+        nav a:hover { color: var(--accent); }
+
+        /* --- BOTÃO SANDUÍCHE (Mobile) --- */
+        .hamburger-menu {
+            display: none; /* Invisível no PC */
+            font-size: 30px;
+            color: var(--text-main);
+            cursor: pointer;
+            padding: 10px;
         }
 
         .btn-logout {
@@ -110,14 +120,14 @@
             color: var(--primary);
         }
 
-        /* --- CONTEÚDO PRINCIPAL --- */
+        /* --- CONTEÚDO --- */
         .main-content {
             padding: 40px 20px;
             text-align: center;
-            flex: 1; /* ISSO EMPURRA O RODAPÉ PARA BAIXO */
+            flex: 1;
         }
 
-        /* --- RODAPÉ (NOVO) --- */
+        /* --- RODAPÉ --- */
         footer {
             background-color: var(--card-bg);
             border-top: 1px solid var(--border);
@@ -132,7 +142,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap; /* Para mobile */
+            flex-wrap: wrap;
             font-size: 0.9em;
             color: var(--text-muted);
         }
@@ -143,12 +153,9 @@
             margin-left: 5px;
             transition: color 0.2s;
         }
-        .footer-link:hover {
-            color: var(--accent);
-            text-decoration: underline;
-        }
+        .footer-link:hover { color: var(--accent); text-decoration: underline; }
 
-        /* --- ESTILOS GERAIS --- */
+        /* --- CSS GERAL --- */
         a { color: var(--accent); text-decoration: none; }
         a:hover { text-decoration: underline; }
         nav a:hover { text-decoration: none; }
@@ -163,11 +170,9 @@
             border: none;
             cursor: pointer;
             font-weight: bold;
-            transition: background 0.3s, transform 0.2s;
             margin: 5px;
         }
-        .btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
-
+        
         input, select, textarea {
             background-color: #2c2c2c;
             border: 1px solid var(--border);
@@ -177,19 +182,44 @@
             width: 100%;
             box-sizing: border-box;
         }
-        input:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
 
-        h1, h2, h3, h4, h5 { color: white; margin-top: 0; }
-        p { color: var(--text-muted); line-height: 1.6; }
-        
-        .minha-mensagem { background-color: var(--primary) !important; color: white; border: none; }
-        .outra-mensagem { background-color: #333 !important; color: white; border: none; }
+        /* --- MEDIA QUERY: Onde a mágica acontece --- */
+        @media (max-width: 900px) { /* Ajustei para 900px pois seu menu tem muitos itens */
+            
+            .hamburger-menu {
+                display: block; /* Mostra o botão */
+            }
 
-        /* Ajuste para mobile no rodapé */
-        @media (max-width: 600px) {
+            nav ul {
+                display: none; /* Esconde o menu normal */
+                flex-direction: column;
+                position: absolute;
+                top: 90px; /* Altura do header */
+                left: 0;
+                width: 100%;
+                background-color: var(--card-bg);
+                border-bottom: 2px solid var(--primary);
+                padding: 20px 0;
+                gap: 20px;
+                text-align: center;
+                z-index: 999;
+                box-shadow: 0 10px 10px rgba(0,0,0,0.5);
+            }
+
+            /* Quando o Javascript adicionar a classe .active, ele aparece */
+            nav ul.active {
+                display: flex;
+            }
+
+            nav a {
+                font-size: 1.2em; /* Links maiores no celular */
+                display: block;
+                padding: 10px;
+            }
+            
             .footer-container {
                 flex-direction: column;
-                gap: 10px;
+                gap: 15px;
                 text-align: center;
             }
         }
@@ -206,35 +236,38 @@
                 </a>
             </div>
 
-            <nav>
-    <ul>
-        {% if user.is_authenticated %}
-            <li><a href="{% url 'dashboard' %}">Início</a></li>
-            <li><a href="{% url 'lista_usuarios' %}">Conversas</a></li>
-            <li><a href="{% url 'calendario' %}">Agenda</a></li>
-            <li><a href="{% url 'usuarios_online' %}">Usuários Online</a></li>
-            <li><a href="{% url 'quem_somos' %}">Quem Somos</a></li>
-            <li><a href="{% url 'meu_perfil' %}">Meu Perfil</a></li>
+            <div class="hamburger-menu" onclick="toggleMenu()">
+                &#9776; </div>
 
-            {% if user.is_superuser %}
-                <li>
-                    <a href="/admin/" target="_blank" style="color: #ffcc00; border: 1px solid #ffcc00; padding: 5px 10px; border-radius: 15px; font-size: 0.8em;">
-                        ⚙️ ADMIN
-                    </a>
-                </li>
-            {% endif %}
-            <li>
-                <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-logout">SAIR</button>
-                </form>
-            </li>
-        {% else %}
-            <li><a href="{% url 'login' %}">Entrar</a></li>
-            <li><a href="{% url 'quem_somos' %}">Quem Somos</a></li>
-        {% endif %}
-    </ul>
-</nav>
+            <nav>
+                <ul id="menuPrincipal">
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'dashboard' %}">Início</a></li>
+                        <li><a href="{% url 'lista_usuarios' %}">Conversas</a></li>
+                        <li><a href="{% url 'calendario' %}">Agenda</a></li>
+                        <li><a href="{% url 'usuarios_online' %}">Usuários Online</a></li>
+                        <li><a href="{% url 'quem_somos' %}">Quem Somos</a></li>
+                        <li><a href="{% url 'meu_perfil' %}">Meu Perfil</a></li>
+
+                        {% if user.is_superuser %}
+                            <li>
+                                <a href="/admin/" target="_blank" style="color: #ffcc00; border: 1px solid #ffcc00; padding: 5px 10px; border-radius: 15px; font-size: 0.8em;">
+                                    ⚙️ ADMIN
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li>
+                            <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-logout">SAIR</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}">Entrar</a></li>
+                        <li><a href="{% url 'quem_somos' %}">Quem Somos</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
 
         </div>
     </header>
@@ -255,6 +288,13 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        function toggleMenu() {
+            var menu = document.getElementById("menuPrincipal");
+            menu.classList.toggle("active");
+        }
+    </script>
 
 </body>
 </html>
