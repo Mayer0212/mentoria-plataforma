@@ -59,6 +59,9 @@ class Perfil(models.Model):
     profissao = models.CharField(max_length=100, blank=True, null=True, verbose_name="Profissão")
     formacao = models.CharField(max_length=150, blank=True, null=True, verbose_name="Formação Acadêmica")
     empresa = models.CharField(max_length=100, blank=True, null=True)
+    telefone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Telefone / WhatsApp")
+    linkedin = models.URLField(blank=True, null=True, verbose_name="LinkedIn (Link Completo)")
+    instagram = models.CharField(max_length=50, blank=True, null=True, verbose_name="Instagram (@usuario)")
     foto = models.ImageField(upload_to='perfil_fotos/', blank=True, null=True, default='default.jpg')
 
     def __str__(self):

@@ -70,7 +70,12 @@ class UserUpdateForm(forms.ModelForm):
 class PerfilUpdateForm(forms.ModelForm):
     class Meta:
         model = Perfil
-        fields = ['foto', 'profissao', 'empresa', 'formacao', 'idade', 'bio']
+        # Adicionei os novos campos nesta lista:
+        fields = ['foto', 'profissao', 'empresa', 'formacao', 'idade', 'telefone', 'linkedin', 'instagram', 'bio']
+        
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3}),
+            'linkedin': forms.URLInput(attrs={'placeholder': 'https://linkedin.com/in/seu-perfil'}),
+            'instagram': forms.TextInput(attrs={'placeholder': '@seu.usuario'}),
+            'telefone': forms.TextInput(attrs={'placeholder': '(XX) 99999-9999'}),
         }
