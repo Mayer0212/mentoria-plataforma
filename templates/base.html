@@ -236,9 +236,6 @@
                 </a>
             </div>
 
-            <div class="hamburger-menu" onclick="toggleMenu()">
-                &#9776; </div>
-
             <nav>
                 <ul id="menuPrincipal">
                     {% if user.is_authenticated %}
@@ -268,6 +265,10 @@
                     {% endif %}
                 </ul>
             </nav>
+
+            <div class="hamburger-menu" onclick="toggleMenu()">
+                &#9776; 
+            </div>
 
         </div>
     </header>
