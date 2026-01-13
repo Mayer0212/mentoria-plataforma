@@ -7,6 +7,7 @@
     <div style="text-align: center; margin-bottom: 40px;">
         <h2>🚀 Quem Faz Acontecer</h2>
         <p style="color: var(--text-muted);">Conheça a equipe DAKA e nossos mentores especialistas.</p>
+        <p style="font-size: 0.8em; color: var(--accent);">* Clique no card para acessar o LinkedIn</p>
     </div>
 
     <div class="tabs-container">
@@ -19,103 +20,145 @@
     </div>
 
     <div id="dakaSection" class="tab-content" style="display: block;">
+        
+        <div style="text-align: center; margin-bottom: 30px;">
+            <button class="btn-history" onclick="toggleHistory()">
+                📖 Conheça Nossa História e Missão
+            </button>
+            
+            <div id="dakaHistory" class="history-content">
+                <h3 style="color: var(--primary); margin-top: 0;">Quem Somos: DAKA</h3>
+                <p>
+                    Fundado em <strong>15 de maio de 2009</strong>, o Diretório Acadêmico Karen Adami (DAKA) é a entidade de representação dos estudantes de Engenharia de Petróleo da Universidade Federal de Pelotas (UFPel). Como uma organização sem fins lucrativos, nosso propósito central é ser o elo entre o corpo discente, a coordenação do curso, a universidade e os alunos.
+                </p>
+                <p>
+                    O Diretório teve sua idealização a partir da necessidade de uma voz ativa para representar os alunos e suas demandas nos órgãos acadêmicos. A partir disso, a professora homenageada em nosso nome, <strong>Dra. Karen Adami</strong>, foi de grande valia para nossa fundação, sendo um pilar para sua criação e forte idealizadora do DAKA.
+                </p>
+                <p>
+                    Ademais, no dia 22 de setembro de 2025, conquistamos a aquisição de nosso <strong>próprio CNPJ</strong>, nos fortalecendo ainda mais como instituição e firmando nossa independência como uma instituição feita exclusivamente por alunos e para alunos.
+                </p>
+
+                <h4 style="color: var(--accent); margin-bottom: 5px;">Nossa Missão</h4>
+                <p>
+                    Nossa principal função é fornecer apoio e auxílio acadêmico contínuo. Acreditamos que a jornada universitária vai muito além da sala de aula, por isso trabalhamos para garantir que cada aluno tenha o suporte necessário para enfrentar os desafios da graduação, promovendo um ambiente de aprendizado justo e colaborativo.
+                </p>
+
+                <h4 style="color: var(--accent); margin-bottom: 5px;">Representatividade e Atuação Política</h4>
+                <p>
+                    O DAKA exerce um papel fundamental na administração do curso. Mantemos cadeira ativa no Conselho e no Colegiado, assegurando que a voz dos alunos seja ouvida e respeitada nas decisões estratégicas. Lutamos pelos direitos estudantis e pela constante melhoria da qualidade do ensino na UFPel.
+                </p>
+
+                <h4 style="color: var(--accent); margin-bottom: 5px;">Desenvolvimento Humano e Integração</h4>
+                <p>Entendemos que a formação de um engenheiro também passa pelo bem-estar social e mental. Por isso, nosso calendário anual é diverso e abrange:</p>
+                <ul style="text-align: left; padding-left: 20px; color: var(--text-muted);">
+                    <li><strong>Eventos Acadêmicos e Sociais:</strong> Momentos com profissionais da psicologia e ações de suporte à saúde mental.</li>
+                    <li><strong>Solidariedade:</strong> Campanhas de arrecadação voltadas para a sociedade e pessoas em situação de fragilidade.</li>
+                    <li><strong>Integração e Lazer:</strong> Organização de eventos esportivos, festas e momentos de recreação que fortalecem os laços entre os estudantes.</li>
+                </ul>
+
+                <h4 style="color: var(--accent); margin-bottom: 5px;">Sempre à Disposição</h4>
+                <p>
+                    Estamos presentes em todos os semestres letivos, prontos para ouvir, orientar e agir. Seja para resolver uma demanda acadêmica, propor melhorias ou buscar suporte, o DAKA se coloca à disposição de cada aluno da Engenharia de Petróleo.
+                </p>
+            </div>
+        </div>
         <div class="team-grid">
             
-            <div class="member-card">
+            <a href="https://www.linkedin.com/in/lorenzo-rodrigues-luz-ba6125278?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro1.jpeg' %}" alt="Membro DAKA" >
                 </div>
                 <h3>Lorenzo Rodriguez Luz</h3>
                 <span class="role">Presidente</span>
-            </div>
+            </a>
 
-            <div class="member-card">
+            <a href="https://www.linkedin.com/in/gabriel-de-%C3%A1vila-bahr-728836270?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro2.jpeg' %}" alt="Membro DAKA" >
                 </div>
                 <h3>Gabriel Bahr</h3>
                 <span class="role">Vice-Presidente</span>
-            </div>
+            </a>
 
-             <div class="member-card">
+            <a href="https://www.linkedin.com/in/nilton-r%C3%A9gis-a5a826232?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro3.jpeg' %}" alt="Membro DAKA" >
                 </div>
                 <h3>Nilton Regis Netto</h3>
                 <span class="role">Secretário Geral</span>
-            </div>
+            </a>
 
-            <div class="member-card">
+            <a href="https://www.linkedin.com/in/guilherme-alchieri-b30689287/" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro4.jpeg' %}" alt="Membro DAKA" >
                 </div>
                 <h3>Guilherme Alcheri</h3>
                 <span class="role">2º Secretário</span>
-            </div>
+            </a>
 
-            <div class="member-card">
+            <a href="https://www.linkedin.com/in/mariana-rieckel-volz-41b7a1222?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro5.jpeg' %}" alt="Membro DAKA" >
                 </div>
                 <h3>Mariana Volz</h3>
                 <span class="role">Tesoureira</span>
-            </div>
+            </a>
 
-            <div class="member-card">
+            <a href="https://www.instagram.com/palomacastro_lima/" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro6.jpeg' %}" alt="Membro DAKA" >
                 </div>
                 <h3>Paloma Castro</h3>
                 <span class="role">Diretora do Dpto. Acadêmico</span>
-            </div>
+            </a>
 
-            <div class="member-card">
+            <a href="https://www.linkedin.com/in/luy-moraes-918870285/" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro7.jpeg' %}" alt="Membro DAKA" >
                 </div>
                 <h3>Luy Moraes</h3>
                 <span class="role">Diretor de Eventos</span>
-            </div>
+            </a>
 
-            <div class="member-card">
+            <a href="https://www.linkedin.com/in/giovanni-mayer-74809a249/" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro8.jpeg' %}" alt="Membro DAKA" >
                 </div>
                 <h3>Giovanni Mayer</h3>
                 <span class="role">Webmaster</span>
-            </div>
+            </a>
 
-            <div class="member-card">
+            <a href="https://www.instagram.com/anna_debastiani_/" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro9.jpeg' %}" alt="Membro DAKA" >
                 </div>
                 <h3>Anna Julia</h3>
                 <span class="role">Diretora de Vendas</span>
-            </div>
+            </a>
 
-            <div class="member-card">
+            <a href="https://www.linkedin.com/in/thomas-perleberg-915084240/" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro10.jpeg' %}" alt="Membro DAKA" >
                 </div>
                 <h3>Thomas Perlenberg</h3>
                 <span class="role">1º Conselheiro Fiscal</span>
-            </div>
+            </a>
 
-            <div class="member-card">
+            <a href="https://www.instagram.com/rafaele.porto" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro11.jpeg' %}" alt="Membro DAKA" >
                 </div>
-                <h3>Rafaela Gomes</h3>
+                <h3>Rafaele Gomes</h3>
                 <span class="role">Diretora de Marketing</span>
-            </div>
+            </a>
 
-            <div class="member-card">
+            <a href="https://www.instagram.com/fbblank?igsh=MWQ5bngzYnhjc3hlbw%3D%3D&utm_source=qr" target="_blank" class="member-card">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/daka_membro12.jpeg' %}" alt="Membro DAKA" >
                 </div>
                 <h3>Artur Blank</h3>
                 <span class="role">2º Conselheiro Fiscal</span>
-            </div>
+            </a>
 
         </div>
     </div>
@@ -123,7 +166,7 @@
     <div id="mentoresSection" class="tab-content" style="display: none;">
         <div class="team-grid">
             
-            <div class="member-card mentor-style">
+            <a href="#" target="_blank" class="member-card mentor-style">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/mentor1.jpg' %}" alt="Mentor" onerror="this.src='https://ui-avatars.com/api/?name=Mentor+Um&background=2ecc71&color=fff'">
                 </div>
@@ -132,9 +175,9 @@
                 <p class="description">
                     "Com 15 anos de experiência offshore, ajudo jovens a entenderem a dinâmica das plataformas."
                 </p>
-            </div>
+            </a>
 
-            <div class="member-card mentor-style">
+            <a href="#" target="_blank" class="member-card mentor-style">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/mentor2.jpg' %}" alt="Mentor" onerror="this.src='https://ui-avatars.com/api/?name=Mentor+Dois&background=2ecc71&color=fff'">
                 </div>
@@ -143,9 +186,9 @@
                 <p class="description">
                     "Focado em análise de solo e exploração. Minha missão é passar conhecimento prático."
                 </p>
-            </div>
+            </a>
 
-            <div class="member-card mentor-style">
+            <a href="#" target="_blank" class="member-card mentor-style">
                 <div class="photo-wrapper">
                     <img src="{% static 'img/mentor3.jpg' %}" alt="Mentor" onerror="this.src='https://ui-avatars.com/api/?name=Mentor+Tres&background=2ecc71&color=fff'">
                 </div>
@@ -154,7 +197,7 @@
                 <p class="description">
                     "Especialista em energias renováveis e transição energética para o mercado futuro."
                 </p>
-            </div>
+            </a>
 
         </div>
     </div>
@@ -164,22 +207,28 @@
 <script>
     function openTab(evt, sectionName) {
         var i, tabcontent, tablinks;
-
-        // 1. Esconde todos os conteúdos
         tabcontent = document.getElementsByClassName("tab-content");
         for (i = 0; i < tabcontent.length; i++) {
             tabcontent[i].style.display = "none";
         }
-
-        // 2. Remove a classe "active" de todos os botões
         tablinks = document.getElementsByClassName("tab-btn");
         for (i = 0; i < tablinks.length; i++) {
             tablinks[i].className = tablinks[i].className.replace(" active", "");
         }
-
-        // 3. Mostra o conteúdo atual e adiciona "active" no botão clicado
         document.getElementById(sectionName).style.display = "block";
         evt.currentTarget.className += " active";
+    }
+
+    // --- NOVA FUNÇÃO PARA O BOTÃO ---
+    function toggleHistory() {
+        var content = document.getElementById("dakaHistory");
+        if (content.style.display === "block") {
+            content.style.display = "none";
+        } else {
+            content.style.display = "block";
+            // Animaçãozinha de scroll suave até o texto
+            content.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 </script>
 
@@ -199,7 +248,7 @@
         cursor: pointer;
         padding: 14px 16px;
         font-size: 1.1em;
-        width: 50%; /* Ocupa metade cada um */
+        width: 50%;
         color: var(--text-muted);
         font-weight: bold;
         transition: 0.3s;
@@ -225,7 +274,7 @@
         animation: fadeIn 0.5s;
     }
 
-    /* CARD DE MEMBRO */
+    /* CARD DE MEMBRO (Link) */
     .member-card {
         background: var(--card-bg);
         border: 1px solid var(--border);
@@ -233,6 +282,9 @@
         padding: 25px;
         text-align: center;
         transition: transform 0.3s;
+        display: block; 
+        text-decoration: none; 
+        cursor: pointer; 
     }
 
     .member-card:hover {
@@ -247,7 +299,7 @@
         border-radius: 50%;
         object-fit: cover;
         margin-bottom: 15px;
-        border: 3px solid var(--primary); /* Borda Vermelha Padrão (DAKA) */
+        border: 3px solid var(--primary);
     }
 
     .member-card h3 { margin: 0; color: white; font-size: 1.2em; }
@@ -255,11 +307,11 @@
     
     /* ESTILO ESPECÍFICO PARA MENTORES */
     .mentor-style {
-        border-left: 5px solid #2ecc71; /* Detalhe verde na esquerda */
+        border-left: 5px solid #2ecc71;
     }
     
     .mentor-style .photo-wrapper img {
-        border-color: #2ecc71; /* Borda Verde */
+        border-color: #2ecc71;
     }
 
     .mentor-style .role {
@@ -274,10 +326,48 @@
         line-height: 1.5;
     }
 
-    /* Animação suave ao trocar de aba */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- NOVOS ESTILOS DA HISTÓRIA --- */
+    .btn-history {
+        background-color: var(--card-bg);
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 1em;
+        transition: 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-history:hover {
+        background-color: var(--primary);
+        color: white;
+        transform: scale(1.05);
+    }
+
+    .history-content {
+        display: none; /* Começa escondido */
+        background-color: #1a1a1a;
+        padding: 30px;
+        margin-top: 20px;
+        border-radius: 10px;
+        border-left: 4px solid var(--primary);
+        text-align: left;
+        line-height: 1.6;
+        animation: fadeIn 0.5s;
+    }
+
+    .history-content p {
+        margin-bottom: 15px;
+        color: var(--text-muted);
     }
 </style>
 {% endblock %}

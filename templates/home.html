@@ -1,8 +1,107 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
-    <h1>Bem-vindo ao Portal de Mentoria</h1>
-    <p>Acesse o sistema para ver seu progresso.</p>
-    <br>
-    <a href="{% url 'login' %}" class="btn">Fazer Login</a>
+
+<div class="home-banner-central">
+    
+    <div class="home-text-content">
+        <h1>Bem-vindo ao Portal de Mentoria</h1>
+        <p>Acesse o sistema para ver seu progresso.</p>
+        <br>
+        <a href="{% url 'login' %}" class="btn login-btn">Fazer Login</a>
+
+        <img src="{% static 'logocel.png' %}" alt="Logo Mobile" class="mobile-logo">
+    </div>
+
+</div>
+
+<style>
+    /* --- ESTILOS PC --- */
+
+    /* Container principal que segura a imagem de fundo */
+    .home-banner-central {
+        /* Ocupa toda a largura da área de conteúdo */
+        width: 100%;
+        
+        /* Define uma altura mínima para o banner ficar imponente no PC.
+           Ajuste este valor (ex: 600px, 70vh) se quiser mais ou menos alto. */
+        min-height: 80vh; 
+        
+        /* Configuração do Fundo */
+        background-image: url("{% static 'logopc.png' %}");
+        /* 'cover' garante que a imagem preencha todo o container mantendo a proporção */
+        background-size: cover; 
+        background-position: center center;
+        background-repeat: no-repeat;
+        
+        /* Arredondar os cantos para ficar visualmente agradável no centro */
+
+        /* Uma sombra leve para destacar o banner do fundo do site */
+       
+        
+        /* Centralizar o texto e o botão dentro do banner */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        
+        /* Cor do texto no PC (branco para contrastar) */
+        color: white;
+        /* Sombra no texto para garantir leitura se a imagem tiver partes claras */
+        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    .home-text-content h1 {
+        font-size: 2.8em;
+        margin-bottom: 15px;
+    }
+    
+    .home-text-content p {
+        font-size: 1.4em;
+        font-weight: 500;
+    }
+
+    .login-btn {
+        font-size: 1.1em;
+        padding: 12px 40px;
+        margin-top: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .mobile-logo {
+        display: none; /* Escondida no PC */
+    }
+
+    /* --- ESTILOS MOBILE (Celular e Tablets pequenos) --- */
+    @media (max-width: 768px) {
+        .home-banner-central {
+            /* Desliga o fundo e estilos de banner no celular */
+            background-image: none !important;
+            min-height: auto;
+            box-shadow: none;
+            border-radius: 0;
+            padding: 30px 10px;
+            
+            /* Volta a cor do texto para o padrão do site */
+            color: var(--text-main); 
+            text-shadow: none;
+        }
+
+        .home-text-content h1 {
+            font-size: 2em;
+        }
+        .home-text-content p {
+             font-size: 1.1em;
+        }
+
+        .mobile-logo {
+            display: block; /* Mostra a logo */
+            margin: 40px auto 0 auto;
+            max-width: 160px;
+            height: auto;
+        }
+    }
+</style>
+
 {% endblock %}
