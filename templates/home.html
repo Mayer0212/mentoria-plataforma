@@ -3,103 +3,100 @@
 
 {% block content %}
 
-<div class="home-banner-central">
+<div class="home-container">
     
-    <div class="home-text-content">
-        <h1>Bem-vindo ao Portal de Mentoria</h1>
-        <p>Acesse o sistema para ver seu progresso.</p>
+    <div class="home-content">
+        <h1>Bem-vindo ao DAKA CONNECT!</h1>
+        <p>Acesse o sistema para ver seu progresso, tarefas e agenda.</p>
+        
         <br>
+        
         <a href="{% url 'login' %}" class="btn login-btn">Fazer Login</a>
 
-        <img src="{% static 'logocel.png' %}" alt="Logo Mobile" class="mobile-logo">
+        <div class="logo-container">
+            <img src="{% static 'logocel.png' %}" alt="Logo DAKA" class="home-logo">
+        </div>
     </div>
 
 </div>
 
 <style>
-    /* --- ESTILOS PC --- */
+    /* --- ESTILOS GERAIS (PC e Mobile) --- */
 
-    /* Container principal que segura a imagem de fundo */
-    .home-banner-central {
-        /* Ocupa toda a largura da área de conteúdo */
-        width: 100%;
-        
-        /* Define uma altura mínima para o banner ficar imponente no PC.
-           Ajuste este valor (ex: 600px, 70vh) se quiser mais ou menos alto. */
-        min-height: 80vh; 
-        
-        /* Configuração do Fundo */
-        background-image: url("{% static 'logopc.png' %}");
-        /* 'cover' garante que a imagem preencha todo o container mantendo a proporção */
-        background-size: cover; 
-        background-position: center center;
-        background-repeat: no-repeat;
-        
-        /* Arredondar os cantos para ficar visualmente agradável no centro */
-
-        /* Uma sombra leve para destacar o banner do fundo do site */
-       
-        
-        /* Centralizar o texto e o botão dentro do banner */
+    .home-container {
+        /* Centraliza tudo na tela verticalmente e horizontalmente */
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
+        min-height: 60vh; /* Garante que ocupe uma boa altura da tela */
         text-align: center;
-        
-        /* Cor do texto no PC (branco para contrastar) */
-        color: white;
-        /* Sombra no texto para garantir leitura se a imagem tiver partes claras */
-        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        width: 100%;
     }
 
-    .home-text-content h1 {
-        font-size: 2.8em;
+    .home-content h1 {
+        font-size: 2.5em;
         margin-bottom: 15px;
+        color: var(--text-main, #e0e0e0); /* Usa a cor do seu tema */
+    }
+
+    .home-content p {
+        font-size: 1.3em;
+        color: var(--text-muted, #aaaaaa);
+        max-width: 600px; /* Evita que a frase fique muito comprida em telas largas */
+        margin: 0 auto;
+    }
+
+    /* Estilo do Botão */
+    .login-btn {
+        font-size: 1.2em;
+        padding: 12px 40px;
+        margin-top: 30px; /* Espaço entre o texto e o botão */
+        display: inline-block;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        transition: transform 0.2s;
     }
     
-    .home-text-content p {
-        font-size: 1.4em;
-        font-weight: 500;
+    .login-btn:hover {
+        transform: translateY(-3px);
     }
 
-    .login-btn {
-        font-size: 1.1em;
-        padding: 12px 40px;
-        margin-top: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    /* --- ESTILOS DA LOGO --- */
+    .logo-container {
+        margin-top: 50px; /* Espaço entre o botão e a logo */
     }
 
-    .mobile-logo {
-        display: none; /* Escondida no PC */
+    .home-logo {
+        width: 250px; /* Tamanho da logo no PC */
+        height: auto;
+        opacity: 0.9; /* Um pouquinho transparente para ficar elegante */
+        transition: opacity 0.3s;
     }
 
-    /* --- ESTILOS MOBILE (Celular e Tablets pequenos) --- */
+    .home-logo:hover {
+        opacity: 1; /* Fica 100% visível ao passar o mouse */
+    }
+
+    /* --- AJUSTES PARA CELULAR (Mobile) --- */
     @media (max-width: 768px) {
-        .home-banner-central {
-            /* Desliga o fundo e estilos de banner no celular */
-            background-image: none !important;
-            min-height: auto;
-            box-shadow: none;
-            border-radius: 0;
-            padding: 30px 10px;
-            
-            /* Volta a cor do texto para o padrão do site */
-            color: var(--text-main); 
-            text-shadow: none;
+        .home-container {
+            min-height: auto; /* Remove a altura mínima forçada */
+            padding: 40px 20px;
         }
 
-        .home-text-content h1 {
-            font-size: 2em;
-        }
-        .home-text-content p {
-             font-size: 1.1em;
+        .home-content h1 {
+            font-size: 1.8em;
         }
 
-        .mobile-logo {
-            display: block; /* Mostra a logo */
-            margin: 40px auto 0 auto;
-            max-width: 160px;
-            height: auto;
+        .home-content p {
+            font-size: 1.1em;
+        }
+        
+        .logo-container {
+            margin-top: 40px;
+        }
+
+        .home-logo {
+            width: 180px; /* Logo um pouco menor no celular */
         }
     }
 </style>
