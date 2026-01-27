@@ -31,16 +31,16 @@
                     <div style="margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
                         <strong style="color: white;">⏰ {{ r.data_inicio|date:"H:i" }}</strong> - {{ r.titulo }}<br>
                         <div style="font-size: 0.9em; margin-top: 5px; color: var(--text-muted);">
-    <div>Organizador: <strong style="color: white;">{{ r.solicitante.username }}</strong></div>
-    <div>
-        Convidados: 
-        {% for convidado in r.convidados.all %}
-            <span style="color: var(--accent);">{{ convidado.username }}</span>{% if not forloop.last %}, {% endif %}
-        {% empty %}
-            Ninguém
-        {% endfor %}
-    </div>
-</div>
+                            <div>Organizador: <strong style="color: white;">{{ r.solicitante.username }}</strong></div>
+                            <div>
+                                Convidados: 
+                                {% for convidado in r.convidados.all %}
+                                    <span style="color: var(--accent);">{{ convidado.username }}</span>{% if not forloop.last %}, {% endif %}
+                                {% empty %}
+                                    Ninguém
+                                {% endfor %}
+                            </div>
+                        </div>
                         <br>
                         <a href="{{ r.link_externo }}" target="_blank" style="color: var(--accent); font-size: 0.9em;">Acessar Link Externo</a>
                     </div>
@@ -66,10 +66,72 @@
 
     <div style="margin-top: 40px; text-align: center;">
         <p style="margin-bottom: 20px;">Ações Rápidas</p>
-        <a href="{% url 'nova_reuniao' %}" class="btn">+ Marcar Reunião</a>
+        
+        {% if user.perfil.tipo == 'Mentor' or user.is_superuser %}
+            <a href="{% url 'nova_reuniao' %}" class="btn">+ Marcar Reunião</a>
+        {% else %}
+            <a href="#" onclick="avisoApenasMentores(event)" class="btn btn-bloqueado">+ Marcar Reunião</a>
+        {% endif %}
+
         <a href="{% url 'nova_tarefa' %}" class="btn">+ Agendar Tarefa</a>
         <a href="{% url 'lista_usuarios' %}" class="btn">💬 Enviar Mensagem</a>
     </div>
 
 </div>
+
+<div id="toast-aviso" class="toast-hidden">
+    🚫 Apenas mentores podem criar reuniões.
+</div>
+
+<style>
+    /* Estilo do botão bloqueado */
+    .btn-bloqueado {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: #444;
+    }
+
+    /* Estilo do Toast (Notificação) */
+    .toast-hidden {
+        visibility: hidden;
+        min-width: 250px;
+        background-color: #c0392b;
+        color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        padding: 16px;
+        position: fixed;
+        z-index: 1000;
+        left: 50%;
+        bottom: 30px;
+        transform: translateX(-50%);
+        font-size: 17px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .toast-show {
+        visibility: visible;
+        animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @keyframes fadein {
+        from {bottom: 0; opacity: 0;}
+        to {bottom: 30px; opacity: 1;}
+    }
+
+    @keyframes fadeout {
+        from {bottom: 30px; opacity: 1;}
+        to {bottom: 0; opacity: 0;}
+    }
+</style>
+
+<script>
+    function avisoApenasMentores(e) {
+        e.preventDefault(); // Impede o clique
+        var x = document.getElementById("toast-aviso");
+        x.className = "toast-show"; // Mostra
+        setTimeout(function(){ x.className = x.className.replace("toast-show", "toast-hidden"); }, 3000); // Esconde
+    }
+</script>
+
 {% endblock %}

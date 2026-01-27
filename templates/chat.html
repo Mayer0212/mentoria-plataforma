@@ -28,6 +28,26 @@
         border-bottom-left-radius: 2px;
         border: 1px solid #333;
     }
+
+    /* 4. DIVISOR DE DATA (NOVO) */
+    .date-divider {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin: 20px 0; /* Espaço em cima e em baixo */
+        opacity: 0.8;
+    }
+
+    .date-divider span {
+        background-color: rgba(255, 255, 255, 0.1); /* Fundo sutil transparente */
+        color: #aaa; /* Texto cinza claro */
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.75rem; /* Letra pequena */
+        font-weight: bold;
+        text-transform: uppercase; /* Letras maiúsculas */
+        letter-spacing: 0.5px;
+    }
 </style>
 
 <div style="max-width: 800px; margin: 0 auto; text-align: left;">
@@ -72,6 +92,11 @@
         
         {% for msg in mensagens %}
             
+            {% ifchanged msg.data_envio.date %}
+                <div class="date-divider">
+                    <span>{{ msg.data_envio|date:"d \d\e F" }}</span>
+                </div>
+            {% endifchanged %}
             <div class="balao-msg {% if msg.remetente == user %}msg-enviada{% else %}msg-recebida{% endif %}">
                 
                 <p style="margin: 0; line-height: 1.4; color: inherit;">{{ msg.conteudo }}</p>
@@ -107,6 +132,7 @@
 </div>
 
 <script>
+    // Rola para o final automaticamente ao carregar
     window.onload = function() {
         var chatBox = document.getElementById("chat-box");
         if(chatBox) chatBox.scrollTop = chatBox.scrollHeight;

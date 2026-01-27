@@ -103,48 +103,55 @@ def sala_chat(request, username):
 @login_required
 def criar_tarefa(request):
     if request.method == 'POST':
-        # MUDANÇA 1: Passamos user=request.user aqui para o form validar as permissões
+        # Passamos user=request.user para validar permissões (se tiver lógica no form)
         form = TarefaForm(request.POST, user=request.user)
         
         if form.is_valid():
             tarefa = form.save(commit=False)
             
-            # MUDANÇA 2: Verificamos se o mentor escolheu alguém
-            # (O campo 'usuario' vem do form.cleaned_data)
-            usuario_escolhido = form.cleaned_data.get('usuario')
+            # --- Correção do IntegrityError ---
+            tarefa.criador = request.user 
             
+            # Lógica para definir para QUEM é a tarefa
+            usuario_escolhido = form.cleaned_data.get('usuario')
             if usuario_escolhido:
-                # Se tem alguém selecionado, a tarefa vai pra ele
                 tarefa.usuario = usuario_escolhido
                 messages.success(request, f'Tarefa atribuída para {usuario_escolhido.username}!')
             else:
-                # Se está vazio (ou se o campo estava oculto), é para mim mesmo
                 tarefa.usuario = request.user
                 messages.success(request, 'Tarefa criada com sucesso!')
             
             tarefa.save()
-            return redirect('dashboard')
+            return redirect('calendario')
             
     else:
-        # MUDANÇA 3: Passamos user=request.user aqui para o form montar o HTML correto
         form = TarefaForm(user=request.user)
     
+    # Renderiza o template correto (verifique se o nome do seu arquivo é nova_tarefa.html ou form_generico.html)
+    # Usamos o 'form_generico.html' e passamos um título para a página
     return render(request, 'form_generico.html', {'form': form, 'titulo': 'Nova Tarefa'})
 
 @login_required
 def calendario(request):
-    # Pega TODAS as reuniões futuras (não só as de hoje)
-    reunioes = Reuniao.objects.filter(
-        Q(solicitante=request.user) | Q(convidados=request.user)
-    ).distinct().order_by('data_inicio')
+    agora = timezone.now()
+    hoje = agora.date() # Pega apenas a data (sem hora) para comparar com tarefas
 
-    # Pega TODAS as tarefas não concluídas
-    tarefas = Tarefa.objects.filter(usuario=request.user, concluida=False).order_by('data_prazo')
+    # 1. Reuniões: Apenas futuras (data_inicio >= agora)
+    # Se quiser mostrar as de hoje que já passaram da hora, use 'gte=agora.date()'
+    reunioes = Reuniao.objects.filter(data_inicio__gte=agora).order_by('data_inicio')
 
-    return render(request, 'calendario.html', {
-        'reunioes': reunioes, 
-        'tarefas': tarefas
-    })
+    # 2. Tarefas Pendentes/Futuras (Prazo >= hoje)
+    tarefas = Tarefa.objects.filter(data_prazo__gte=hoje).order_by('data_prazo')
+
+    # 3. Tarefas Antigas (Prazo < hoje)
+    tarefas_antigas = Tarefa.objects.filter(data_prazo__lt=hoje).order_by('-data_prazo')
+
+    context = {
+        'reunioes': reunioes,
+        'tarefas': tarefas,
+        'tarefas_antigas': tarefas_antigas, # Enviamos a nova lista para o HTML
+    }
+    return render(request, 'calendario.html', context)
 
 def quem_somos(request):
     return render(request, 'quem_somos.html')
