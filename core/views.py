@@ -8,6 +8,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from .forms import UserUpdateForm, PerfilUpdateForm
 from django.http import HttpResponseForbidden
+from django.db.models import Count 
+from .forms import PostForm, ComentarioForm
+from .models import Post, Comentario 
 
 # --- Página de Entrada (Pública) ---
 def home(request):
@@ -26,7 +29,11 @@ def dashboard(request):
         Q(solicitante=request.user) | Q(convidados=request.user)
     ).filter(data_inicio__date=hoje).distinct().order_by('data_inicio')
     
-    tarefas = Tarefa.objects.filter(usuario=request.user, data_prazo=hoje)
+    # Mostra se: Eu sou o dono da tarefa (usuario) OU Eu fui quem criou (criador)
+    tarefas = Tarefa.objects.filter(
+        Q(usuario=request.user) | Q(criador=request.user),
+        data_prazo=hoje
+    ).distinct()
     
     # Conta mensagens não lidas
     notificacoes = Mensagem.objects.filter(destinatario=request.user, lido=False).count()
@@ -39,8 +46,9 @@ def dashboard(request):
     }
     return render(request, 'dashboard.html', context)
 
+# --- CRIAR REUNIÃO (Renomeado para bater com o HTML) ---
 @login_required
-def criar_reuniao(request):
+def nova_reuniao(request):
     if request.method == 'POST':
         form = ReuniaoForm(request.POST, user=request.user)
         if form.is_valid():
@@ -51,7 +59,8 @@ def criar_reuniao(request):
             form.save_m2m() # <--- OBRIGATÓRIO: Salva os convidados (Many-to-Many)
             
             messages.success(request, 'Reunião agendada com sucesso!')
-            return redirect('dashboard')
+            # MUDANÇA AQUI: Agora vai para o calendário
+            return redirect('calendario')
     else:
         form = ReuniaoForm(user=request.user)
     
@@ -59,23 +68,18 @@ def criar_reuniao(request):
 
 @login_required
 def lista_usuarios(request):
-    # Busca usuários que:
-    # 1. Enviaram mensagem para mim (mensagens_enviadas__destinatario=eu)
-    # OU
-    # 2. Receberam mensagem minha (mensagens_recebidas__remetente=eu)
+    # Busca usuários que trocaram mensagens comigo
     usuarios = User.objects.filter(
         Q(mensagens_enviadas__destinatario=request.user) | 
         Q(mensagens_recebidas__remetente=request.user)
-    ).distinct().exclude(id=request.user.id) # O distinct evita repetição e exclude tira o próprio user
+    ).distinct().exclude(id=request.user.id)
 
     return render(request, 'lista_usuarios.html', {'usuarios': usuarios})
 
 @login_required
 def sala_chat(request, username):
-    # Pega o usuário com quem quero falar (ou dá erro 404 se não existir)
     outro_usuario = get_object_or_404(User, username=username)
 
-    # 1. Se eu enviei mensagem no formulário abaixo:
     if request.method == 'POST':
         conteudo = request.POST.get('conteudo')
         if conteudo:
@@ -86,13 +90,11 @@ def sala_chat(request, username):
             )
             return redirect('sala_chat', username=username)
 
-    # 2. Busca o histórico de mensagens (Minhas p/ ele OU dele p/ mim)
     mensagens = Mensagem.objects.filter(
         Q(remetente=request.user, destinatario=outro_usuario) | 
         Q(remetente=outro_usuario, destinatario=request.user)
     ).order_by('data_envio')
 
-    # 3. Marca as mensagens DELE como lidas (já que estou vendo elas agora)
     Mensagem.objects.filter(remetente=outro_usuario, destinatario=request.user, lido=False).update(lido=True)
 
     return render(request, 'chat.html', {
@@ -100,16 +102,16 @@ def sala_chat(request, username):
         'mensagens': mensagens
     })
 
+# --- CRIAR TAREFA (Renomeado para bater com o HTML) ---
 @login_required
-def criar_tarefa(request):
+def nova_tarefa(request):
     if request.method == 'POST':
-        # Passamos user=request.user para validar permissões (se tiver lógica no form)
         form = TarefaForm(request.POST, user=request.user)
         
         if form.is_valid():
             tarefa = form.save(commit=False)
             
-            # --- Correção do IntegrityError ---
+            # Define o criador para evitar erro de integridade
             tarefa.criador = request.user 
             
             # Lógica para definir para QUEM é a tarefa
@@ -127,8 +129,7 @@ def criar_tarefa(request):
     else:
         form = TarefaForm(user=request.user)
     
-    # Renderiza o template correto (verifique se o nome do seu arquivo é nova_tarefa.html ou form_generico.html)
-    # Usamos o 'form_generico.html' e passamos um título para a página
+    # Usamos o 'form_generico.html' pois você disse que funcionou melhor
     return render(request, 'form_generico.html', {'form': form, 'titulo': 'Nova Tarefa'})
 
 @login_required
@@ -136,21 +137,18 @@ def calendario(request):
     agora = timezone.now()
     hoje = agora.date()
 
-    # 1. Reuniões (Mantém a lógica de data)
-    # Sugestão: Também filtrar reuniões para segurança, igual fizemos no dashboard
+    # 1. Reuniões (Com filtro de segurança)
     reunioes = Reuniao.objects.filter(
         Q(solicitante=request.user) | Q(convidados=request.user),
         data_inicio__gte=agora
     ).distinct().order_by('data_inicio')
 
-    # --- CORREÇÃO DAS TAREFAS ---
-    
-    # Passo 1: Pega TODAS as tarefas que eu tenho permissão de ver (Criador OU Destinatário)
+    # 2. Tarefas (Com filtro de segurança)
     todas_minhas_tarefas = Tarefa.objects.filter(
         Q(usuario=request.user) | Q(criador=request.user)
     ).distinct()
 
-    # Passo 2: A partir dessa lista filtrada, separamos Futuras e Antigas
+    # Separa em Futuras e Antigas
     tarefas = todas_minhas_tarefas.filter(data_prazo__gte=hoje).order_by('data_prazo')
     tarefas_antigas = todas_minhas_tarefas.filter(data_prazo__lt=hoje).order_by('-data_prazo')
 
@@ -166,10 +164,6 @@ def quem_somos(request):
 
 @login_required
 def usuarios_online(request):
-    # Vamos pegar TODOS os usuários ativos
-    # Se quiser filtrar só quem logou recentemente, a lógica seria outra,
-    # mas para uma lista de "Membros da Plataforma", pegar todos é melhor.
-    
     mentores = User.objects.filter(perfil__tipo='Mentor', is_active=True)
     estudantes = User.objects.filter(perfil__tipo='Estudante', is_active=True)
 
@@ -182,13 +176,12 @@ def usuarios_online(request):
 def meu_perfil(request):
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
-        # request.FILES é obrigatório para imagens!
         p_form = PerfilUpdateForm(request.POST, request.FILES, instance=request.user.perfil)
 
         if u_form.is_valid() and p_form.is_valid():
             u_form.save()
             p_form.save()
-            return redirect('meu_perfil') # Recarrega a página para mostrar os dados novos
+            return redirect('meu_perfil') 
             
     else:
         u_form = UserUpdateForm(instance=request.user)
@@ -202,7 +195,15 @@ def meu_perfil(request):
 
 def perfil_publico(request, username):
     perfil_user = get_object_or_404(User, username=username)
-    return render(request, 'perfil_publico.html', {'perfil_user': perfil_user})
+    
+    # Busca os posts desse usuário (do mais novo para o mais velho)
+    posts = Post.objects.filter(autor=perfil_user).order_by('-data_criacao')
+    
+    context = {
+        'perfil_user': perfil_user,
+        'posts': posts
+    }
+    return render(request, 'perfil_publico.html', context)
 
 @login_required
 def editar_tarefa(request, id):
@@ -212,15 +213,13 @@ def editar_tarefa(request, id):
     if tarefa.criador != request.user:
         return HttpResponseForbidden("Você não tem permissão.")
 
-    # Se clicou em "Salvar"
     if request.method == 'POST':
         tarefa.titulo = request.POST.get('titulo')
         tarefa.data_prazo = request.POST.get('data')
         tarefa.informacoes = request.POST.get('descricao')
         tarefa.save()
-        return redirect('calendario') # ou redirect('calendario') se preferir
+        return redirect('calendario') # Redireciona para o calendário
     
-    # Se clicou no botão "Editar" (GET) -> Abre a página
     return render(request, 'editar_tarefa.html', {'tarefa': tarefa})
 
 @login_required
@@ -230,7 +229,6 @@ def excluir_tarefa(request, id):
         tarefa.delete()
     return redirect('calendario')
 
-# --- NOVAS VIEWS PARA REUNIÕES ---
 @login_required
 def editar_reuniao(request, id):
     reuniao = get_object_or_404(Reuniao, id=id)
@@ -239,23 +237,19 @@ def editar_reuniao(request, id):
     if reuniao.solicitante != request.user:
         return HttpResponseForbidden("Você não tem permissão.")
 
-    # Se clicou em "Salvar"
     if request.method == 'POST':
         reuniao.titulo = request.POST.get('titulo')
         
         data_str = request.POST.get('data')
-        hora_str = request.POST.get('hora') # Vamos pegar a hora separada para facilitar
+        hora_str = request.POST.get('hora')
         
-        # Junta data e hora se necessário, ou salva direto dependendo do seu model.
-        # Assumindo que seu model usa DateTimeField, o ideal é juntar:
         if data_str and hora_str:
             reuniao.data_inicio = f"{data_str} {hora_str}"
             
         reuniao.link_externo = request.POST.get('link')
         reuniao.save()
-        return redirect('calendario')
+        return redirect('calendario') # Redireciona para o calendário
     
-    # Se clicou no botão "Editar" (GET) -> Abre a página
     return render(request, 'editar_reuniao.html', {'reuniao': reuniao})
 
 @login_required
@@ -264,3 +258,97 @@ def excluir_reuniao(request, id):
     if reuniao.solicitante == request.user:
         reuniao.delete()
     return redirect('calendario')
+
+
+# --- VIEW DO FÓRUM (FEED) ---
+@login_required
+def forum(request):
+    form = PostForm()
+    
+    # 1. Se o usuário enviou um novo post
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.autor = request.user
+            post.save()
+            return redirect('forum')
+
+    # 2. Configuração dos Filtros e Busca
+    posts = Post.objects.all()
+    
+    # Busca (Search)
+    query = request.GET.get('q')
+    if query:
+        # Busca no conteúdo do post OU no username do autor
+        posts = posts.filter(
+            Q(conteudo__icontains=query) | 
+            Q(autor__username__icontains=query)
+        )
+
+    # Filtro de Tipo de Usuário (Alunos ou Mentores)
+    filtro_autor = request.GET.get('filtro_autor')
+    if filtro_autor == 'mentores':
+        posts = posts.filter(autor__perfil__tipo='Mentor')
+    elif filtro_autor == 'alunos':
+        posts = posts.filter(autor__perfil__tipo='Estudante')
+
+    # Ordenação (Mais Recentes ou Mais Curtidos)
+    ordem = request.GET.get('ordem')
+    if ordem == 'curtidos':
+        # Anota a contagem de likes e ordena por ela (desc), e depois por data (desc)
+        posts = posts.annotate(num_likes=Count('likes')).order_by('-num_likes', '-data_criacao')
+    else:
+        # Padrão: Mais recentes primeiro
+        posts = posts.order_by('-data_criacao')
+
+    context = {
+        'posts': posts,
+        'form': form,
+    }
+    return render(request, 'forum.html', context)
+
+# --- DETALHES DO POST (COMENTÁRIOS) ---
+@login_required
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    
+    # Lista apenas os comentários principais (que não são respostas)
+    comentarios_principais = post.comentarios.filter(parent=None).order_by('-data_criacao')
+    
+    form = ComentarioForm()
+
+    if request.method == 'POST':
+        form = ComentarioForm(request.POST)
+        if form.is_valid():
+            comentario = form.save(commit=False)
+            comentario.autor = request.user
+            comentario.post = post
+            
+            # Lógica da Resposta: Verifica se veio um ID de pai
+            parent_id = request.POST.get('parent_id')
+            if parent_id:
+                parent_obj = Comentario.objects.get(id=parent_id)
+                comentario.parent = parent_obj
+            
+            comentario.save()
+            return redirect('post_detail', pk=pk)
+
+    context = {
+        'post': post,
+        'comentarios': comentarios_principais, # Passamos a lista filtrada
+        'form': form
+    }
+    return render(request, 'post_detail.html', context)
+
+# --- FUNÇÃO DE DAR LIKE (AJAX/Simples) ---
+@login_required
+def dar_like(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+    else:
+        post.likes.add(request.user)
+    
+    # Redireciona de volta para a mesma página que estava (feed ou detalhe)
+    return redirect(request.META.get('HTTP_REFERER', 'forum'))

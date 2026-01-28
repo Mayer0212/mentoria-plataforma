@@ -14,13 +14,13 @@ urlpatterns = [
 
     path('painel/', views.dashboard, name='dashboard'),
 
-    path('nova-reuniao/', views.criar_reuniao, name='nova_reuniao'),
+    path('nova-reuniao/', views.nova_reuniao, name='nova_reuniao'),
 
     path('chat/', views.lista_usuarios, name='lista_usuarios'),
 
     path('chat/<str:username>/', views.sala_chat, name='sala_chat'),
 
-    path('nova-tarefa/', views.criar_tarefa, name='nova_tarefa'),
+    path('nova-tarefa/', views.nova_tarefa, name='nova_tarefa'),
 
     path('calendario/', views.calendario, name='calendario'),
 
@@ -39,4 +39,10 @@ urlpatterns = [
     path('reuniao/editar/<int:id>/', views.editar_reuniao, name='editar_reuniao'),
     
     path('reuniao/excluir/<int:id>/', views.excluir_reuniao, name='excluir_reuniao'),
+
+    path('forum/', views.forum, name='forum'),
+
+    path('forum/post/<int:pk>/', views.post_detail, name='post_detail'),
+    
+    path('forum/like/<int:pk>/', views.dar_like, name='dar_like'),
 ]

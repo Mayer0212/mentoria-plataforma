@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User  # <--- ESSA LINHA RESOLVE O ERRO
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
 
 # --- SEUS MODELOS ANTIGOS (Mantive eles aqui) ---
 class Mensagem(models.Model):
@@ -79,3 +80,36 @@ def save_user_profile(sender, instance, **kwargs):
         instance.perfil.save()
     except:
         Perfil.objects.create(user=instance)
+
+
+# --- FÓRUM / FEED ---
+
+class Post(models.Model):
+    autor = models.ForeignKey(User, on_delete=models.CASCADE)
+    conteudo = models.TextField(max_length=500, verbose_name="O que você está pensando?")
+    imagem = models.ImageField(upload_to='posts_img/', blank=True, null=True)
+    data_criacao = models.DateTimeField(default=timezone.now)
+    
+    # Campo para curtidas (Many to Many = Vários usuários podem curtir vários posts)
+    likes = models.ManyToManyField(User, related_name='posts_curtidos', blank=True)
+
+    class Meta:
+        ordering = ['-data_criacao'] # O mais novo aparece primeiro
+
+    def __str__(self):
+        return f"Post de {self.autor.username}"
+
+    def total_likes(self):
+        return self.likes.count()
+
+class Comentario(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comentarios')
+    autor = models.ForeignKey(User, on_delete=models.CASCADE)
+    conteudo = models.TextField(max_length=200)
+    data_criacao = models.DateTimeField(default=timezone.now)
+    
+    # NOVO CAMPO: Aponta para outro comentário (Pai)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='respostas')
+
+    def __str__(self):
+        return f"Comentário de {self.autor.username} no post {self.post.id}"

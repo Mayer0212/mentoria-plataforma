@@ -1,6 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+    /* Estilos do Mentor (Reaproveitado do Fórum) */
+    .mentor-border { 
+        border-color: #FFD700 !important; /* Força a borda dourada */
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); 
+    }
+    .mentor-badge { 
+        color: #FFD700; 
+        background: rgba(255, 215, 0, 0.1); 
+        font-size: 0.6em; 
+        padding: 4px 8px; 
+        border-radius: 6px; 
+        margin-left: 10px; 
+        border: 1px solid #FFD700; 
+        vertical-align: middle;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Hover nos posts */
+    .post-item:hover {
+        background: rgba(255,255,255,0.08) !important;
+        transform: translateX(5px);
+    }
+</style>
+
 <div style="max-width: 700px; margin: 0 auto; text-align: left;">
 
     <div style="background: var(--card-bg); border-radius: 15px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
@@ -13,7 +39,8 @@
                 
                 {% if perfil_user.perfil.foto %}
                     <img src="{{ perfil_user.perfil.foto.url }}" 
-                         style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 5px solid var(--card-bg); background: var(--card-bg);">
+                         class="{% if perfil_user.perfil.tipo == 'Mentor' %}mentor-border{% endif %}"
+                         style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 5px solid var(--card-bg); background: var(--card-bg); transition: 0.3s;">
                 {% else %}
                     <div style="width: 120px; height: 120px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 3em; border: 5px solid var(--card-bg);">
                         {{ perfil_user.username|make_list|first|upper }}
@@ -29,7 +56,12 @@
                 {% endif %}
             </div>
 
-            <h1 style="margin: 0; font-size: 2em; color: white;">{{ perfil_user.username }}</h1>
+            <h1 style="margin: 0; font-size: 2em; color: white; display: flex; align-items: center;">
+                {{ perfil_user.username }}
+                {% if perfil_user.perfil.tipo == 'Mentor' %}
+                    <span class="mentor-badge">Mentor</span>
+                {% endif %}
+            </h1>
             <p style="color: var(--accent); font-size: 1.1em; font-weight: 500; margin: 5px 0 20px;">
                 {{ perfil_user.perfil.profissao|default:"Membro da Comunidade" }}
             </p>
@@ -49,6 +81,40 @@
             <p style="line-height: 1.6; color: var(--text-main);">
                 {{ perfil_user.perfil.bio|default:"Este usuário ainda não escreveu uma biografia."|linebreaks }}
             </p>
+
+            <h3 style="color: white; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 40px;">
+                Publicações Recentes
+            </h3>
+
+            <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                {% for post in posts %}
+                    <a href="{% url 'post_detail' post.id %}" class="post-item" style="text-decoration: none; color: inherit; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 10px; border: 1px solid var(--border); transition: 0.2s; display: block;">
+                        
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <small style="color: var(--accent); font-weight: bold;">
+                                {{ post.data_criacao|date:"d/m/Y" }}
+                            </small>
+                            <small style="color: var(--text-muted);">Ver detalhes ➜</small>
+                        </div>
+
+                        <p style="color: #e0e0e0; margin: 0; line-height: 1.4;">
+                            {{ post.conteudo|truncatechars:140 }}
+                        </p>
+
+                        {% if post.imagem %}
+                            <div style="margin-top: 10px; font-size: 0.9em; color: var(--text-muted);">
+                                📷 <i>Contém imagem</i>
+                            </div>
+                        {% endif %}
+                        
+                        <div style="margin-top: 10px; font-size: 0.85em; color: #888;">
+                            ❤️ {{ post.total_likes }} &nbsp; • &nbsp; 💬 {{ post.comentarios.count }}
+                        </div>
+                    </a>
+                {% empty %}
+                    <p style="color: var(--text-muted); font-style: italic;">Este usuário ainda não publicou nada no fórum.</p>
+                {% endfor %}
+            </div>
 
         </div>
     </div>

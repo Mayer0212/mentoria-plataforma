@@ -2,6 +2,7 @@ from django import forms
 from .models import Reuniao, Tarefa
 from django.contrib.auth.models import User
 from .models import Perfil, Reuniao, Tarefa # Adicione Perfil aqui
+from .models import Post, Comentario
 
 # Formulário para criar Reunião
 class ReuniaoForm(forms.ModelForm):
@@ -78,4 +79,34 @@ class PerfilUpdateForm(forms.ModelForm):
             'linkedin': forms.URLInput(attrs={'placeholder': 'https://linkedin.com/in/seu-perfil'}),
             'instagram': forms.TextInput(attrs={'placeholder': '@seu.usuario'}),
             'telefone': forms.TextInput(attrs={'placeholder': '(XX) 99999-9999'}),
+        }
+
+
+
+# --- FÓRUM ---
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['conteudo', 'imagem']
+        widgets = {
+            'conteudo': forms.Textarea(attrs={
+                'class': 'form-control', 
+                'rows': 3, 
+                'placeholder': 'O que está acontecendo?',
+                'style': 'resize: none; border: none; font-size: 1.2em; background: transparent; color: white;'
+            }),
+            'imagem': forms.FileInput(attrs={'class': 'form-control', 'style': 'display: none;', 'id': 'file-input'}),
+        }
+
+class ComentarioForm(forms.ModelForm):
+    class Meta:
+        model = Comentario
+        fields = ['conteudo']
+        widgets = {
+            'conteudo': forms.Textarea(attrs={
+                'class': 'form-control', 
+                'rows': 1, 
+                'placeholder': 'Postar sua resposta',
+                'style': 'resize: none; border-radius: 20px; background: #202327; color: white; border: none;'
+            }),
         }

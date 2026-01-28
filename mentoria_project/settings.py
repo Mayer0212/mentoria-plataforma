@@ -127,7 +127,7 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-
+LOGIN_URL = 'home' #Caso nao esteja logado para onde vai
 LOGIN_REDIRECT_URL = 'dashboard'  # Para onde vai após logar
 LOGOUT_REDIRECT_URL = 'home'      # Para onde vai após sair
 
