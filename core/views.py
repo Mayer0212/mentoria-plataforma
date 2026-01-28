@@ -134,22 +134,30 @@ def criar_tarefa(request):
 @login_required
 def calendario(request):
     agora = timezone.now()
-    hoje = agora.date() # Pega apenas a data (sem hora) para comparar com tarefas
+    hoje = agora.date()
 
-    # 1. Reuniões: Apenas futuras (data_inicio >= agora)
-    # Se quiser mostrar as de hoje que já passaram da hora, use 'gte=agora.date()'
-    reunioes = Reuniao.objects.filter(data_inicio__gte=agora).order_by('data_inicio')
+    # 1. Reuniões (Mantém a lógica de data)
+    # Sugestão: Também filtrar reuniões para segurança, igual fizemos no dashboard
+    reunioes = Reuniao.objects.filter(
+        Q(solicitante=request.user) | Q(convidados=request.user),
+        data_inicio__gte=agora
+    ).distinct().order_by('data_inicio')
 
-    # 2. Tarefas Pendentes/Futuras (Prazo >= hoje)
-    tarefas = Tarefa.objects.filter(data_prazo__gte=hoje).order_by('data_prazo')
+    # --- CORREÇÃO DAS TAREFAS ---
+    
+    # Passo 1: Pega TODAS as tarefas que eu tenho permissão de ver (Criador OU Destinatário)
+    todas_minhas_tarefas = Tarefa.objects.filter(
+        Q(usuario=request.user) | Q(criador=request.user)
+    ).distinct()
 
-    # 3. Tarefas Antigas (Prazo < hoje)
-    tarefas_antigas = Tarefa.objects.filter(data_prazo__lt=hoje).order_by('-data_prazo')
+    # Passo 2: A partir dessa lista filtrada, separamos Futuras e Antigas
+    tarefas = todas_minhas_tarefas.filter(data_prazo__gte=hoje).order_by('data_prazo')
+    tarefas_antigas = todas_minhas_tarefas.filter(data_prazo__lt=hoje).order_by('-data_prazo')
 
     context = {
         'reunioes': reunioes,
         'tarefas': tarefas,
-        'tarefas_antigas': tarefas_antigas, # Enviamos a nova lista para o HTML
+        'tarefas_antigas': tarefas_antigas,
     }
     return render(request, 'calendario.html', context)
 
