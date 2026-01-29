@@ -45,4 +45,10 @@ urlpatterns = [
     path('forum/post/<int:pk>/', views.post_detail, name='post_detail'),
     
     path('forum/like/<int:pk>/', views.dar_like, name='dar_like'),
+
+    path('post/<int:pk>/deletar/', views.deletar_post, name='deletar_post'),
+
+    path('comentario/<int:pk>/deletar/', views.deletar_comentario, name='deletar_comentario'),
+
+    path('notificacao/<int:id>/lida/', views.marcar_notificacao_lida, name='marcar_notificacao_lida'),
 ]

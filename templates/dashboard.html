@@ -7,6 +7,25 @@
         <h2>Olá, {{ user.username }} 👋</h2>
     </div>
 
+
+    {% if avisos %}
+<div style="background: rgba(29, 155, 240, 0.1); border: 1px solid #1d9bf0; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+    <h3 style="color: #1d9bf0; margin-top: 0; font-size: 1.2em;">🔔 Novas Atividades</h3>
+    
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+        {% for aviso in avisos %}
+            <a href="{% url 'marcar_notificacao_lida' aviso.id %}" 
+               style="text-decoration: none; background: #202327; padding: 10px; border-radius: 8px; display: flex; align-items: center; justify-content: space-between; transition: 0.2s;">
+                
+                <span style="color: white;">{{ aviso.mensagem }}</span>
+                <small style="color: #71767b;">{{ aviso.data_criacao|timesince }}</small>
+            
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
     {% if notificacoes > 0 %}
     <div style="background-color: #3e1a1a; border-left: 5px solid var(--accent); padding: 20px; margin-bottom: 30px; border-radius: 6px; color: #ffcccc;">
         <h3 style="margin: 0; color: var(--accent);">🔔 Você tem novidades!</h3>

@@ -114,3 +114,15 @@ class Comentario(models.Model):
 
     def __str__(self):
         return f"Comentário de {self.autor.username} no post {self.post.id}"
+    
+
+# --- MODELO DE NOTIFICAÇÃO ---
+class Notificacao(models.Model):
+    destinatario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notificacoes')
+    mensagem = models.CharField(max_length=255)
+    link = models.CharField(max_length=200, null=True, blank=True) # Link para ir até o post
+    lida = models.BooleanField(default=False)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notificação para {self.destinatario.username}: {self.mensagem}"

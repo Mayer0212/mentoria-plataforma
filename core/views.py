@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Q
-from .models import Mensagem, Reuniao, Tarefa, Perfil
+from .models import Mensagem, Reuniao, Tarefa, Perfil, Notificacao
 from .forms import ReuniaoForm, TarefaForm
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -35,6 +35,7 @@ def dashboard(request):
         data_prazo=hoje
     ).distinct()
     
+    avisos = Notificacao.objects.filter(destinatario=request.user, lida=False).order_by('-data_criacao')
     # Conta mensagens não lidas
     notificacoes = Mensagem.objects.filter(destinatario=request.user, lido=False).count()
     
@@ -42,6 +43,7 @@ def dashboard(request):
         'reunioes': reunioes,
         'tarefas': tarefas,
         'notificacoes': notificacoes,
+        'avisos': avisos,
         'hoje': hoje
     }
     return render(request, 'dashboard.html', context)
@@ -312,10 +314,7 @@ def forum(request):
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-    
-    # Lista apenas os comentários principais (que não são respostas)
     comentarios_principais = post.comentarios.filter(parent=None).order_by('-data_criacao')
-    
     form = ComentarioForm()
 
     if request.method == 'POST':
@@ -325,18 +324,38 @@ def post_detail(request, pk):
             comentario.autor = request.user
             comentario.post = post
             
-            # Lógica da Resposta: Verifica se veio um ID de pai
+            # --- LÓGICA DE NOTIFICAÇÃO ---
             parent_id = request.POST.get('parent_id')
+            
+            # CASO 1: É uma RESPOSTA a um comentário
             if parent_id:
                 parent_obj = Comentario.objects.get(id=parent_id)
                 comentario.parent = parent_obj
+                
+                # Notifica o dono do comentário original (se não for eu mesmo)
+                if parent_obj.autor != request.user:
+                    Notificacao.objects.create(
+                        destinatario=parent_obj.autor,
+                        mensagem=f"💬 {request.user.username} respondeu seu comentário.",
+                        link=f"/forum/post/{post.id}/"
+                    )
+            
+            # CASO 2: É um comentário direto no POST
+            else:
+                # Notifica o dono do Post (se não for eu mesmo)
+                if post.autor != request.user:
+                    Notificacao.objects.create(
+                        destinatario=post.autor,
+                        mensagem=f"📢 {request.user.username} comentou no seu post.",
+                        link=f"/forum/post/{post.id}/"
+                    )
             
             comentario.save()
             return redirect('post_detail', pk=pk)
 
     context = {
         'post': post,
-        'comentarios': comentarios_principais, # Passamos a lista filtrada
+        'comentarios': comentarios_principais,
         'form': form
     }
     return render(request, 'post_detail.html', context)
@@ -352,3 +371,42 @@ def dar_like(request, pk):
     
     # Redireciona de volta para a mesma página que estava (feed ou detalhe)
     return redirect(request.META.get('HTTP_REFERER', 'forum'))
+
+
+@login_required
+def deletar_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    
+    # Verificação de Segurança: Só apaga se for o Dono OU Superusuário
+    if request.user == post.autor or request.user.is_superuser:
+        post.delete()
+        messages.success(request, "Post apagado com sucesso!")
+        return redirect('forum')
+    else:
+        messages.error(request, "Você não tem permissão para apagar este post.")
+        return redirect('post_detail', pk=pk)
+
+@login_required
+def deletar_comentario(request, pk):
+    comentario = get_object_or_404(Comentario, pk=pk)
+    post_id = comentario.post.id # Guardamos o ID para voltar pro post depois
+    
+    # Verificação de Segurança
+    if request.user == comentario.autor or request.user.is_superuser:
+        comentario.delete()
+        messages.success(request, "Comentário apagado!")
+    else:
+        messages.error(request, "Sem permissão.")
+    
+    return redirect('post_detail', pk=post_id)
+
+
+@login_required
+def marcar_notificacao_lida(request, id):
+    notificacao = get_object_or_404(Notificacao, id=id)
+    if notificacao.destinatario == request.user:
+        notificacao.lida = True
+        notificacao.save()
+        # Redireciona para o link da notificação (o post)
+        return redirect(notificacao.link)
+    return redirect('dashboard')

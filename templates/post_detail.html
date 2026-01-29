@@ -2,9 +2,7 @@
 
 {% block content %}
 <style>
-    /* ... (MANTENHA SEUS ESTILOS ANTERIORES DO FÓRUM/MENTOR AQUI) ... */
-    
-    /* RECOLE OS ESTILOS QUE JÁ TINHAMOS E ADICIONE ESTES NOVOS: */
+    /* ... (MANTENHA SEUS ESTILOS ANTERIORES AQUI) ... */
     
     .feed-container { max-width: 600px; margin: 0 auto; border-left: 1px solid #333; border-right: 1px solid #333; min-height: 100vh; text-align: left; }
     .header-top { padding: 10px 15px; border-bottom: 1px solid #333; display: flex; align-items: center; gap: 20px; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; }
@@ -12,11 +10,9 @@
     .btn-back:hover { background: rgba(255,255,255,0.1); }
 
     .main-post { padding: 15px; border-bottom: 1px solid #333; }
-    .user-info { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+    .user-info { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; position: relative; } /* Adicionei relative aqui */
     .avatar-large { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; }
-    .profile-link { text-decoration: none; color: inherit; }
-    .profile-link:hover { text-decoration: underline; }
-
+    
     .mentor-border { border: 2px solid #FFD700; box-shadow: 0 0 8px rgba(255, 215, 0, 0.6); }
     .mentor-badge { color: #FFD700; background: rgba(255, 215, 0, 0.1); font-size: 0.75em; padding: 2px 6px; border-radius: 4px; margin-left: 5px; border: 1px solid #FFD700; font-weight: bold; text-transform: uppercase; }
 
@@ -24,20 +20,32 @@
     .btn-like-grande:hover { transform: scale(1.1); }
     .btn-like-grande.curtido { color: #f91880; }
 
-    /* --- NOVOS ESTILOS PARA RESPOSTAS --- */
-    .comment-card { padding: 15px; border-bottom: 1px solid #333; display: flex; flex-direction: column; }
+    /* Estilos de Comentários */
+    .comment-card { padding: 15px; border-bottom: 1px solid #333; display: flex; flex-direction: column; position: relative; } /* Relative para posicionar o botão apagar */
     .comment-main { display: flex; gap: 12px; }
     .comment-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-    
-    /* Recuo para as respostas */
     .reply-list { margin-left: 52px; margin-top: 10px; border-left: 2px solid #333; padding-left: 10px; }
     
     .btn-reply-toggle { background: none; border: none; color: #71767b; cursor: pointer; font-size: 0.85em; margin-top: 5px; }
     .btn-reply-toggle:hover { color: #1d9bf0; }
-
-    /* Formulário de resposta escondido */
     .reply-form-container { display: none; margin-top: 10px; margin-left: 52px; }
     .reply-form-container.active { display: block; }
+
+    /* --- BOTÃO APAGAR (NOVO) --- */
+    .btn-delete {
+        color: #e74c3c; /* Vermelho */
+        text-decoration: none;
+        font-size: 0.9em;
+        padding: 5px;
+        border-radius: 5px;
+        transition: 0.2s;
+        border: none;
+        background: none;
+        cursor: pointer;
+    }
+    .btn-delete:hover {
+        background: rgba(231, 76, 60, 0.1);
+    }
 
 </style>
 
@@ -53,8 +61,7 @@
             <a href="{% url 'perfil_publico' post.autor.username %}">
                 <img src="{{ post.autor.perfil.foto.url }}" class="avatar-large {% if post.autor.perfil.tipo == 'Mentor' %}mentor-border{% endif %}">
             </a>
-            <div>
-                <div style="display: flex; align-items: center;">
+            <div style="flex: 1;"> <div style="display: flex; align-items: center;">
                     <a href="{% url 'perfil_publico' post.autor.username %}" class="profile-link">
                         <strong style="font-size: 1.1em; color: white;">{{ post.autor.username }}</strong>
                     </a>
@@ -62,6 +69,13 @@
                 </div>
                 <small style="color: #71767b;">{{ post.data_criacao|date:"d/m/Y - H:i" }}</small>
             </div>
+
+            {% if request.user == post.autor or request.user.is_superuser %}
+                <a href="{% url 'deletar_post' post.id %}" class="btn-delete" title="Apagar Post" 
+                   onclick="return confirm('⚠️ Tem certeza que deseja apagar este post permanentemente?');">
+                    🗑️
+                </a>
+            {% endif %}
         </div>
 
         <p style="font-size: 1.2em; color: #e7e9ea; line-height: 1.5; white-space: pre-line; margin-bottom: 15px;">{{ post.conteudo }}</p>
@@ -97,13 +111,22 @@
                     <img src="{{ comentario.autor.perfil.foto.url }}" class="comment-avatar {% if comentario.autor.perfil.tipo == 'Mentor' %}mentor-border{% endif %}">
                 </a>
                 <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 5px;">
-                        <a href="{% url 'perfil_publico' comentario.autor.username %}" class="profile-link">
-                            <strong style="color: white;">{{ comentario.autor.username }}</strong>
-                        </a>
-                        {% if comentario.autor.perfil.tipo == 'Mentor' %} <span class="mentor-badge" style="font-size: 0.6em; padding: 1px 4px;">Mentor</span> {% endif %}
-                        <small style="color: #71767b;">• {{ comentario.data_criacao|timesince }}</small>
+                    <div style="display: flex; justify-content: space-between;"> <div style="display: flex; align-items: center; gap: 5px;">
+                            <a href="{% url 'perfil_publico' comentario.autor.username %}" class="profile-link">
+                                <strong style="color: white;">{{ comentario.autor.username }}</strong>
+                            </a>
+                            {% if comentario.autor.perfil.tipo == 'Mentor' %} <span class="mentor-badge" style="font-size: 0.6em; padding: 1px 4px;">Mentor</span> {% endif %}
+                            <small style="color: #71767b;">• {{ comentario.data_criacao|timesince }}</small>
+                        </div>
+
+                        {% if request.user == comentario.autor or request.user.is_superuser %}
+                            <a href="{% url 'deletar_comentario' comentario.id %}" class="btn-delete" style="font-size: 0.8em;"
+                               onclick="return confirm('⚠️ Tem certeza que deseja apagar este comentário?');">
+                                🗑️
+                            </a>
+                        {% endif %}
                     </div>
+
                     <p style="margin: 0; color: #e7e9ea; white-space: pre-line;">{{ comentario.conteudo }}</p>
                     
                     <button class="btn-reply-toggle" onclick="toggleReplyForm('{{ comentario.id }}')">
@@ -130,12 +153,21 @@
                             <a href="{% url 'perfil_publico' resposta.autor.username %}">
                                 <img src="{{ resposta.autor.perfil.foto.url }}" style="width: 30px; height: 30px; border-radius: 50%;" class="{% if resposta.autor.perfil.tipo == 'Mentor' %}mentor-border{% endif %}">
                             </a>
-                            <div>
-                                <div style="display: flex; align-items: center; gap: 5px;">
-                                    <a href="{% url 'perfil_publico' resposta.autor.username %}" class="profile-link">
-                                        <strong style="color: white; font-size: 0.9em;">{{ resposta.autor.username }}</strong>
-                                    </a>
-                                    {% if resposta.autor.perfil.tipo == 'Mentor' %} <span class="mentor-badge" style="font-size: 0.5em; padding: 1px 3px;">Mentor</span> {% endif %}
+                            <div style="flex: 1;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div style="display: flex; align-items: center; gap: 5px;">
+                                        <a href="{% url 'perfil_publico' resposta.autor.username %}" class="profile-link">
+                                            <strong style="color: white; font-size: 0.9em;">{{ resposta.autor.username }}</strong>
+                                        </a>
+                                        {% if resposta.autor.perfil.tipo == 'Mentor' %} <span class="mentor-badge" style="font-size: 0.5em; padding: 1px 3px;">Mentor</span> {% endif %}
+                                    </div>
+
+                                    {% if request.user == resposta.autor or request.user.is_superuser %}
+                                        <a href="{% url 'deletar_comentario' resposta.id %}" class="btn-delete" style="font-size: 0.7em;"
+                                           onclick="return confirm('⚠️ Tem certeza que deseja apagar esta resposta?');">
+                                            🗑️
+                                        </a>
+                                    {% endif %}
                                 </div>
                                 <p style="margin: 0; color: #e7e9ea; font-size: 0.95em;">{{ resposta.conteudo }}</p>
                             </div>
