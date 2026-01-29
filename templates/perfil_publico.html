@@ -2,9 +2,9 @@
 
 {% block content %}
 <style>
-    /* Estilos do Mentor (Reaproveitado do Fórum) */
+    /* Estilos do Mentor */
     .mentor-border { 
-        border-color: #FFD700 !important; /* Força a borda dourada */
+        border-color: #FFD700 !important; 
         box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); 
     }
     .mentor-badge { 
@@ -24,6 +24,28 @@
     .post-item:hover {
         background: rgba(255,255,255,0.08) !important;
         transform: translateX(5px);
+    }
+
+    /* Botões de Redes Sociais */
+    .social-btn {
+        background: #252525;
+        color: white;
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+        border: 1px solid var(--border);
+        font-size: 0.9em;
+        cursor: pointer; /* Garante a mãozinha no mouse */
+        font-family: inherit; /* Para botões herdarem a fonte */
+    }
+    .social-btn:hover {
+        background: #333;
+        transform: translateY(-2px);
+        color: white;
     }
 </style>
 
@@ -56,24 +78,72 @@
                 {% endif %}
             </div>
 
-            <h1 style="margin: 0; font-size: 2em; color: white; display: flex; align-items: center;">
-                {{ perfil_user.username }}
-                {% if perfil_user.perfil.tipo == 'Mentor' %}
-                    <span class="mentor-badge">Mentor</span>
-                {% endif %}
-            </h1>
-            <p style="color: var(--accent); font-size: 1.1em; font-weight: 500; margin: 5px 0 20px;">
+            <div>
+                <h1 style="margin: 0; font-size: 2em; color: white; display: flex; align-items: center;">
+                    {% if perfil_user.get_full_name %}
+                        {{ perfil_user.get_full_name }}
+                    {% else %}
+                        {{ perfil_user.username }}
+                    {% endif %}
+                    
+                    {% if perfil_user.perfil.tipo == 'Mentor' %}
+                        <span class="mentor-badge">Mentor</span>
+                    {% endif %}
+                </h1>
+                <p style="color: #71767b; font-size: 1em; margin: 2px 0 10px;">@{{ perfil_user.username }}</p>
+            </div>
+
+            <p style="color: var(--accent); font-size: 1.1em; font-weight: 500; margin: 5px 0 15px;">
                 {{ perfil_user.perfil.profissao|default:"Membro da Comunidade" }}
             </p>
 
+            <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px;">
+                
+                <button onclick="copiarTexto('{{ perfil_user.email }}', this)" class="social-btn">
+                    📧 {{ perfil_user.email }}
+                </button>
+
+                {% if perfil_user.perfil.telefone %}
+                    <button onclick="copiarTexto('{{ perfil_user.perfil.telefone }}', this)" class="social-btn">
+                        📱 {{ perfil_user.perfil.telefone }}
+                    </button>
+                {% endif %}
+
+                {% if perfil_user.perfil.instagram %}
+                    <a href="https://instagram.com/{{ perfil_user.perfil.instagram }}" target="_blank" class="social-btn" style="color: #E1306C;">
+                        📸 @{{ perfil_user.perfil.instagram }}
+                    </a>
+                {% endif %}
+
+                {% if perfil_user.perfil.linkedin %}
+                    <a href="{{ perfil_user.perfil.linkedin }}" target="_blank" class="social-btn" style="color: #0077b5;">
+                        🔗 LinkedIn
+                    </a>
+                {% endif %}
+            </div>
+
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+                
+                {% if perfil_user.perfil.idade %}
                 <div style="background: #252525; padding: 15px; border-radius: 8px;">
-                    <small style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8em;">Empresa / Instituição</small>
-                    <div style="color: white; font-weight: bold;">{{ perfil_user.perfil.empresa|default:"-" }}</div>
+                    <small style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8em;">Idade</small>
+                    <div style="color: white; font-weight: bold;">{{ perfil_user.perfil.idade }} anos</div>
                 </div>
+                {% endif %}
+
+                <div style="background: #252525; padding: 15px; border-radius: 8px;">
+                    <small style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8em;">Cidade</small>
+                    <div style="color: white; font-weight: bold;">{{ perfil_user.perfil.cidade|default:"-" }}</div>
+                </div>
+
                 <div style="background: #252525; padding: 15px; border-radius: 8px;">
                     <small style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8em;">Formação</small>
                     <div style="color: white; font-weight: bold;">{{ perfil_user.perfil.formacao|default:"-" }}</div>
+                </div>
+                
+                <div style="background: #252525; padding: 15px; border-radius: 8px;">
+                    <small style="color: var(--text-muted); text-transform: uppercase; font-size: 0.8em;">Empresa / Inst.</small>
+                    <div style="color: white; font-weight: bold;">{{ perfil_user.perfil.empresa|default:"-" }}</div>
                 </div>
             </div>
 
@@ -124,4 +194,29 @@
     </div>
 
 </div>
+
+<script>
+    function copiarTexto(texto, botao) {
+        // Copia para a área de transferência
+        navigator.clipboard.writeText(texto).then(function() {
+            
+            // Guarda o texto original do botão (ex: 📱 11999...)
+            const textoOriginal = botao.innerHTML;
+            
+            // Muda para mensagem de sucesso
+            botao.innerHTML = "✅ Copiado!";
+            botao.style.borderColor = "#2ecc71"; // Borda verde opcional
+            
+            // Depois de 2 segundos, volta ao normal
+            setTimeout(function() {
+                botao.innerHTML = textoOriginal;
+                botao.style.borderColor = "var(--border)";
+            }, 2000);
+            
+        }, function(err) {
+            alert('Erro ao copiar: ' + err);
+        });
+    }
+</script>
+
 {% endblock %}

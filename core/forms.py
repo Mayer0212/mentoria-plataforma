@@ -72,7 +72,7 @@ class PerfilUpdateForm(forms.ModelForm):
     class Meta:
         model = Perfil
         # Adicionei os novos campos nesta lista:
-        fields = ['foto', 'profissao', 'empresa', 'formacao', 'idade', 'telefone', 'linkedin', 'instagram', 'bio']
+        fields = ['foto', 'profissao', 'empresa', 'cidade', 'formacao', 'idade', 'telefone', 'linkedin', 'instagram', 'bio']
         
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 3}),

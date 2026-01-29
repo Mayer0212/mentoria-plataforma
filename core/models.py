@@ -58,6 +58,7 @@ class Perfil(models.Model):
     bio = models.TextField(blank=True, null=True, verbose_name="Sobre mim")
     idade = models.PositiveIntegerField(blank=True, null=True)
     profissao = models.CharField(max_length=100, blank=True, null=True, verbose_name="Profissão")
+    cidade = models.CharField(max_length=100, blank=True, null=True, verbose_name='Cidade/Estado')
     formacao = models.CharField(max_length=150, blank=True, null=True, verbose_name="Formação Acadêmica")
     empresa = models.CharField(max_length=100, blank=True, null=True)
     telefone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Telefone / WhatsApp")
